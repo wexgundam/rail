@@ -3,7 +3,7 @@
  * Project Name:rail
  * Module Name:TODO:Module
  */
-package com.critc.rail.util.Global;
+package com.critc.rail.util.global;
 
 /**
  * what:    (这里用一句话描述这个类的作用). <br/>

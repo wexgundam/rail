@@ -5,7 +5,7 @@
  */
 package com.critc.rail.modal;
 
-import com.critc.rail.util.Global.GridGlobal;
+import com.critc.rail.util.global.GridGlobal;
 
 import java.util.ArrayList;
 import java.util.List;
