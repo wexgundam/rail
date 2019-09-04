@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.critc</groupId>
+    <artifactId>rail</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>rail-web</module>
+        <module>rail-core</module>
+    </modules>
+
+    <name>rail</name>
+
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+        <com.cdpf.version>1.0-SNAPSHOT</com.cdpf.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.critc</groupId>
+                <artifactId>cdpf</artifactId>
+                <version>${com.cdpf.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.critc</groupId>
+                <artifactId>cdpf_core</artifactId>
+                <version>${com.cdpf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.critc</groupId>
+                <artifactId>cdpf_core_web</artifactId>
+                <type>war</type>
+                <version>${com.cdpf.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>com.critc.cdpf</id>
+            <name>com.critc.cdpf</name>
+            <url>http://localhost:8081/nexus/content/groups/com.critc/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <finalName>rail</finalName>
+        <defaultGoal>compile</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>snapshots</name>
+            <url>http://localhost:8081/nexus/content/repositories/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
