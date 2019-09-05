@@ -5,13 +5,15 @@
  */
 package com.critc.rail.modal;
 
-import com.critc.rail.util.global.GridGlobal;
+import com.critc.rail.service.PointVectorService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -25,82 +27,82 @@ import java.util.Vector;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/spring/applicationContext-database.xml")
 public class TestGrid {
+    @Autowired
+    PointVectorService pointVectorService;
 
     @Test
-    public void testToModal() {
+    public void testGrid() {
         double basePointX = 1.000506;
         double basePointY = 2.000506;
-        String basePointString = Double.toString(basePointX) + GridGlobal.POINT_XY_SPLITTER + Double.toString(basePointY);
+        PointVector basePointVector = new PointVector();
+        basePointVector.setPoint(basePointX, basePointY);
         double anchorPoint1X = 2.302;
         double anchorPoint1Y = 3.302;
-        String anchorPoint1String = Double.toString(anchorPoint1X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(anchorPoint1Y);
+        PointVector anchorPointVector1 = new PointVector();
+        anchorPointVector1.setPoint(anchorPoint1X, anchorPoint1Y);
         double anchorPoint2X = 4.302;
         double anchorPoint2Y = 5.302;
-        String anchorPoint2String = Double.toString(anchorPoint2X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(anchorPoint2Y);
-        String anchorPointsString = anchorPoint1String + GridGlobal.POINT_SPLITTER + anchorPoint2String;
-
-        Grid grid = new Grid();
-        grid.setBasePointString(basePointString);
-        grid.setAnchorPointsString(anchorPointsString);
-        grid.toModal();
-        Assert.assertNotNull(grid.getBasePoint());
-        Assert.assertTrue(grid.getBasePoint().get(0).equals(basePointX));
-        Assert.assertTrue(grid.getBasePoint().get(1).equals(basePointY));
-        Assert.assertEquals(2, grid.getAnchorPoints().size());
-        Vector<Double> anchorPoint1 = grid.getAnchorPoint(0);
-        Assert.assertNotNull(anchorPoint1);
-        Assert.assertTrue(anchorPoint1.get(0).equals(anchorPoint1X));
-        Assert.assertTrue(anchorPoint1.get(1).equals(anchorPoint1Y));
-        Vector<Double> anchorPoint2 = grid.getAnchorPoint(1);
-        Assert.assertNotNull(anchorPoint2);
-        Assert.assertTrue(anchorPoint2.get(0).equals(anchorPoint2X));
-        Assert.assertTrue(anchorPoint2.get(1).equals(anchorPoint2Y));
-    }
-
-    @Test
-    public void testToData() {
-        double basePointX = 1.000506;
-        double basePointY = 2.000506;
-        String basePointString = Double.toString(basePointX) + GridGlobal.POINT_XY_SPLITTER + Double.toString(basePointY);
-        double anchorPoint1X = 2.302;
-        double anchorPoint1Y = 3.302;
-        String anchorPoint1String = Double.toString(anchorPoint1X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(anchorPoint1Y);
-        double anchorPoint2X = 4.302;
-        double anchorPoint2Y = 5.302;
-        String anchorPoint2String = Double.toString(anchorPoint2X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(anchorPoint2Y);
-        String anchorPointsString12 = anchorPoint1String + GridGlobal.POINT_SPLITTER + anchorPoint2String;
+        PointVector anchorPointVector2 = new PointVector();
+        anchorPointVector2.setPoint(anchorPoint2X, anchorPoint2Y);
         double anchorPoint3X = 6.302;
         double anchorPoint3Y = 7.302;
-        String anchorPoint3String = Double.toString(anchorPoint3X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(anchorPoint3Y);
-        String anchorPointsString132 = anchorPoint1String + GridGlobal.POINT_SPLITTER + anchorPoint3String + GridGlobal.POINT_SPLITTER + anchorPoint2String;
+        PointVector anchorPointVector3 = new PointVector();
+        anchorPointVector3.setPoint(anchorPoint3X, anchorPoint3Y);
         double newAnchorPoint1X = 8.302;
         double newAnchorPoint1Y = 9.302;
-        String newAnchorPoint1String = Double.toString(newAnchorPoint1X) + GridGlobal.POINT_XY_SPLITTER + Double.toString(newAnchorPoint1Y);
-        String newAnchorPointsString132 = newAnchorPoint1String + GridGlobal.POINT_SPLITTER + anchorPoint3String + GridGlobal.POINT_SPLITTER + anchorPoint2String;
-        String newAnchorPointsString12 = newAnchorPoint1String + GridGlobal.POINT_SPLITTER + anchorPoint2String;
+        PointVector newAnchorPointVector = new PointVector();
+        newAnchorPointVector.setPoint(newAnchorPoint1X, newAnchorPoint1Y);
 
         Grid grid = new Grid();
-        grid.setBasePoint(basePointX, basePointY);
-        grid.addAnchorPoint(anchorPoint1X, anchorPoint1Y);
-        grid.addAnchorPoint(anchorPoint2X, anchorPoint2Y);
-        grid.toData();
-        Assert.assertEquals(basePointString, grid.getBasePointString());
-        Assert.assertEquals(anchorPointsString12, grid.getAnchorPointsString());
-        grid.addAnchorPoint(1, anchorPoint3X, anchorPoint3Y);
-        grid.toData();
-        Assert.assertEquals(basePointString, grid.getBasePointString());
-        Assert.assertEquals(anchorPointsString132, grid.getAnchorPointsString());
-        grid.updateAnchorPoint(0, newAnchorPoint1X, newAnchorPoint1Y);
-        grid.toData();
-        Assert.assertEquals(basePointString, grid.getBasePointString());
-        Assert.assertEquals(newAnchorPointsString132, grid.getAnchorPointsString());
-        grid.removeAnchorPoint(1);
-        grid.toData();
-        Assert.assertEquals(basePointString, grid.getBasePointString());
-        Assert.assertEquals(newAnchorPointsString12, grid.getAnchorPointsString());
-        grid.removeAll();
-        grid.toData();
-        Assert.assertEquals(basePointString, grid.getBasePointString());
-        Assert.assertNull(grid.getAnchorPointsString());
+
+        grid.setBasePointVector(basePointVector);
+        Assert.assertNotNull(grid.getBasePointVector());
+        Assert.assertSame(basePointVector, grid.getBasePointVector());
+
+        grid.addAnchorPointVector(anchorPoint1X, anchorPoint1Y);
+        Assert.assertNotNull(grid.getBasePointVector());
+        Assert.assertSame(basePointVector, grid.getBasePointVector());
+        Assert.assertEquals(1, grid.getAnchorPointVectors().size());
+        Assert.assertEquals(anchorPoint1X, grid.getAnchorPointVector(0).getPointX(), 0);
+        Assert.assertEquals(anchorPoint1Y, grid.getAnchorPointVector(0).getPointY(), 0);
+
+        grid.addAnchorPointVector(anchorPoint2X, anchorPoint2Y);
+        Assert.assertNotNull(grid.getBasePointVector());
+        Assert.assertSame(basePointVector, grid.getBasePointVector());
+        Assert.assertEquals(2, grid.getAnchorPointVectors().size());
+        Assert.assertEquals(anchorPoint1X, grid.getAnchorPointVector(0).getPointX(), 0);
+        Assert.assertEquals(anchorPoint1Y, grid.getAnchorPointVector(0).getPointY(), 0);
+        Assert.assertEquals(anchorPoint2X, grid.getAnchorPointVector(1).getPointX(), 0);
+        Assert.assertEquals(anchorPoint2Y, grid.getAnchorPointVector(1).getPointY(), 0);
+
+        grid.addAnchorPointVector(1, anchorPoint3X, anchorPoint3Y);
+        Assert.assertEquals(3, grid.getAnchorPointVectors().size());
+        Assert.assertEquals(anchorPoint1X, grid.getAnchorPointVector(0).getPointX(), 0);
+        Assert.assertEquals(anchorPoint1Y, grid.getAnchorPointVector(0).getPointY(), 0);
+        Assert.assertEquals(anchorPoint3X, grid.getAnchorPointVector(1).getPointX(), 0);
+        Assert.assertEquals(anchorPoint3Y, grid.getAnchorPointVector(1).getPointY(), 0);
+        Assert.assertEquals(anchorPoint2X, grid.getAnchorPointVector(2).getPointX(), 0);
+        Assert.assertEquals(anchorPoint2Y, grid.getAnchorPointVector(2).getPointY(), 0);
+
+        grid.updateAnchorPointVector(0, newAnchorPoint1X, newAnchorPoint1Y);
+        Assert.assertEquals(3, grid.getAnchorPointVectors().size());
+        Assert.assertEquals(newAnchorPoint1X, grid.getAnchorPointVector(0).getPointX(), 0);
+        Assert.assertEquals(newAnchorPoint1Y, grid.getAnchorPointVector(0).getPointY(), 0);
+        Assert.assertEquals(anchorPoint3X, grid.getAnchorPointVector(1).getPointX(), 0);
+        Assert.assertEquals(anchorPoint3Y, grid.getAnchorPointVector(1).getPointY(), 0);
+        Assert.assertEquals(anchorPoint2X, grid.getAnchorPointVector(2).getPointX(), 0);
+        Assert.assertEquals(anchorPoint2Y, grid.getAnchorPointVector(2).getPointY(), 0);
+
+        grid.removeAnchorPointVector(1);
+        Assert.assertEquals(2, grid.getAnchorPointVectors().size());
+        Assert.assertEquals(newAnchorPoint1X, grid.getAnchorPointVector(0).getPointX(), 0);
+        Assert.assertEquals(newAnchorPoint1Y, grid.getAnchorPointVector(0).getPointY(), 0);
+        Assert.assertEquals(anchorPoint2X, grid.getAnchorPointVector(1).getPointX(), 0);
+        Assert.assertEquals(anchorPoint2Y, grid.getAnchorPointVector(1).getPointY(), 0);
+        grid.removeAllAnchorPointVectors();
+        Assert.assertNotNull(grid.getBasePointVector());
+        Assert.assertSame(basePointVector, grid.getBasePointVector());
+        Assert.assertNull(grid.getAnchorPointVectors());
+        Assert.assertEquals(0, grid.getAnchorPointVectors().size());
     }
 }
