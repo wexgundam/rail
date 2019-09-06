@@ -53,7 +53,7 @@ public class RailNetworkElementService {
         //将元素锚点坐标的字符串形式转为向量形式
         grid.setAnchorPointVectors(toPointVectors(element.getAnchorPointsString()));
         //设置源对象
-        grid.setOrigin(element);
+        grid.setOriginal(element);
         //关联元素和网格
         element.setGrid(grid);
     }

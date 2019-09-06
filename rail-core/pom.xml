@@ -13,6 +13,11 @@
 
     <name>rail-core</name>
 
+    <properties>
+        <org.locationtech.jts.version>1.16.1</org.locationtech.jts.version>
+    </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -155,6 +160,41 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>${org.locationtech.jts.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts.io/jts-io-common -->
+        <dependency>
+            <groupId>org.locationtech.jts.io</groupId>
+            <artifactId>jts-io-common</artifactId>
+            <version>${org.locationtech.jts.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-io -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-io</artifactId>
+            <version>${org.locationtech.jts.version}</version>
+            <type>pom</type>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-modules -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-modules</artifactId>
+            <version>${org.locationtech.jts.version}</version>
+            <type>pom</type>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts</artifactId>
+            <version>${org.locationtech.jts.version}</version>
+            <type>pom</type>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>

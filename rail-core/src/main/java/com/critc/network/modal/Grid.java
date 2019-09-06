@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * what:    网格。铁路路网所有元素的基本特征，每一元素都可视为一个网格。<br/>
+ * what:    <b>网格:</b>铁路路网所有元素的基本特征，每一元素都可视为一个网格。<br/>
  * 网格仅含有与网络有关的信息，不含任何业务信息。 <br/>
  * 基点：在小比例尺时，网格较小，可视为点，基点是网格作为点时的坐标。 <br/>
  * 锚点：网格控制点的集合。控制点能够描述网格的位置、范围。 <br/>
+ * <b>网格间关系：</b>网格与网格之间可以是单点先交、多点相交、相切、包含和分离五种关系.<br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -35,7 +36,7 @@ public class Grid {
     /**
      * 源对象，网格代表的实物对象
      */
-    private Object origin;
+    private Object original;
 
     @Override
     public boolean equals(Object o) {
@@ -150,12 +151,12 @@ public class Grid {
         this.id = id;
     }
 
-    public Object getOrigin() {
-        return origin;
+    public Object getOriginal() {
+        return original;
     }
 
-    public void setOrigin(Object origin) {
-        this.origin = origin;
+    public void setOriginal(Object original) {
+        this.original = original;
     }
 
     public PointVector getBasePointVector() {
