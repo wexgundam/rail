@@ -5,15 +5,17 @@
  */
 package com.critc.rail.modal;
 
+import com.critc.network.modal.Grid;
+
 /**
- * what:    (这里用一句话描述这个类的作用). <br/>
+ * what:    车站. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
  *
  * @author 靳磊 created on 2019/9/4
  */
-public class Station {
+public class Station implements IRailNetworkElement {
     /**
      * 主键，唯一标识
      */

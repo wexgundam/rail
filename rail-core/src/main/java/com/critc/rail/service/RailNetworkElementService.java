@@ -5,34 +5,73 @@
  */
 package com.critc.rail.service;
 
-import com.critc.rail.modal.PointVector;
+import com.critc.rail.modal.IRailNetworkElement;
+import com.critc.network.modal.Grid;
+import com.critc.network.modal.PointVector;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * what:    向量坐标服务. <br/>
- * 1. 将一个坐标的字符串形式转为一个向量
- * 2. 将一组坐标的字符串形式转为一组向量
- * 3. 将一个坐标的一个向量转为字符串形式
- * 4. 将一组坐标的一组向量转为字符串形式
+ * what:    铁路路网元素服务. <br/>
+ * 1. 生成车站对应的网格
+ * 2. 根据网格生成车站对应的坐标属性
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
  *
- * @author 靳磊 created on 2019/9/4
+ * @author 靳磊 created on 2019/9/5
  */
 @Service
-public class PointVectorService {
+public class RailNetworkElementService {
+
     /**
      * 字符串形式的坐标，其X和Y的分割标记为"@"
      */
-    private static final String POINT_XY_SPLITTER = "@";
+    public static final String POINT_XY_SPLITTER = "@";
     /**
      * 字符串形式的若干坐标，每个字符串形式的坐标的分割标记为";"
      */
-    private static final String POINT_SPLITTER = ";";
+    public static final String POINT_SPLITTER = ";";
+
+    /**
+     * what:    根据铁路路网元素信息生成网格，并关联元素与网格. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/5
+     */
+    public void updateGridOfElement(IRailNetworkElement element) {
+        //创建网格
+        Grid grid = new Grid();
+        //设置标识
+        grid.setId(element.getId());
+        //将元素基点坐标的字符串形式转为向量形式
+        grid.setBasePointVector(toPointVector(element.getBasePointString()));
+        //将元素锚点坐标的字符串形式转为向量形式
+        grid.setAnchorPointVectors(toPointVectors(element.getAnchorPointsString()));
+        //设置源对象
+        grid.setOrigin(element);
+        //关联元素和网格
+        element.setGrid(grid);
+    }
+
+    /**
+     * what:    根据网格信息更新路网基点与锚点信息. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/3
+     */
+    public void updateElementByGrid(IRailNetworkElement element) {
+        //将基点坐标的向量形式转为字符串形式
+        element.setBasePointString(toString(element.getGrid().getBasePointVector()));
+        //将锚点坐标的向量形式转为字符串形式
+        element.setAnchorPointsString(toString(element.getGrid().getAnchorPointVectors()));
+    }
 
     /**
      * what:    将给定字符串形式的坐标，转为向量形式的坐标。 <br/>

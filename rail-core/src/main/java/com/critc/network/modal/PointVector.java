@@ -3,7 +3,7 @@
  * Project Name:rail
  * Module Name:TODO:Module
  */
-package com.critc.rail.modal;
+package com.critc.network.modal;
 
 import java.util.Vector;
 

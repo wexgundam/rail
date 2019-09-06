@@ -3,18 +3,15 @@
  * Project Name:rail
  * Module Name:TODO:Module
  */
-package com.critc.rail.modal;
+package com.critc.network.modal;
 
-import com.critc.rail.service.PointVectorService;
+import com.critc.network.modal.Grid;
+import com.critc.network.modal.PointVector;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.awt.*;
-import java.util.Vector;
 
 /**
  * what:    测试Grid. <br/>
@@ -27,9 +24,6 @@ import java.util.Vector;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/spring/applicationContext-database.xml")
 public class TestGrid {
-    @Autowired
-    PointVectorService pointVectorService;
-
     @Test
     public void testGrid() {
         double basePointX = 1.000506;
@@ -102,7 +96,7 @@ public class TestGrid {
         grid.removeAllAnchorPointVectors();
         Assert.assertNotNull(grid.getBasePointVector());
         Assert.assertSame(basePointVector, grid.getBasePointVector());
-        Assert.assertNull(grid.getAnchorPointVectors());
+        Assert.assertNotNull(grid.getAnchorPointVectors());
         Assert.assertEquals(0, grid.getAnchorPointVectors().size());
     }
 }

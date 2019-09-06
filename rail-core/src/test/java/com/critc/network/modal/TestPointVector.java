@@ -3,8 +3,9 @@
  * Project Name:rail
  * Module Name:TODO:Module
  */
-package com.critc.rail.modal;
+package com.critc.network.modal;
 
+import com.critc.network.modal.PointVector;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
