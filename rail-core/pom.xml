@@ -20,6 +20,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.critc</groupId>
+            <artifactId>cdpf_core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>

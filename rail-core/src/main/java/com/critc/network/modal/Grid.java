@@ -53,6 +53,16 @@ public class Grid {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "Grid{" +
+                "id=" + id +
+                ", basePointVector=" + basePointVector +
+                ", anchorPointVectors=" + anchorPointVectors +
+                ", original=" + original +
+                '}';
+    }
+
     /**
      * what:    添加一个锚点，新加入的锚点放在锚点集合的最后位置. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
