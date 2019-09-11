@@ -208,9 +208,11 @@ public class GridService {
                 }
             } catch (InterruptedException e) {
                 // 异常日志
+                logger.error("GridService.getGridContainsTargetGrid()任务类: " + gridServiceTaskFactory.getClass().getSimpleName());
                 logger.error("GridService.getGridContainsTargetGrid()异常信息: " + e.getMessage());
             } catch (ExecutionException e) {
                 // 异常日志
+                logger.error("GridService.getGridContainsTargetGrid()任务类: " + gridServiceTaskFactory.getClass().getSimpleName());
                 logger.error("GridService.getGridContainsTargetGrid()异常信息: " + e.getMessage());
             }
         }
