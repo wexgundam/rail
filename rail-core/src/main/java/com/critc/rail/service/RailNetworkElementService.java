@@ -5,9 +5,11 @@
  */
 package com.critc.rail.service;
 
+import com.critc.network.service.GridService;
 import com.critc.rail.modal.IRailNetworkElement;
 import com.critc.network.modal.Grid;
 import com.critc.network.modal.PointVector;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,8 +17,9 @@ import java.util.List;
 
 /**
  * what:    铁路路网元素服务. <br/>
- * 1. 生成车站对应的网格
- * 2. 根据网格生成车站对应的坐标属性
+ * 1. 生成铁路路网元素对应的网格
+ * 2. 根据网格生成铁路路网元素对应的坐标属性
+ * 3. 判断两个路网元素是否邻接
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -25,7 +28,6 @@ import java.util.List;
  */
 @Service
 public class RailNetworkElementService {
-
     /**
      * 字符串形式的坐标，其X和Y的分割标记为"@"
      */
@@ -34,6 +36,11 @@ public class RailNetworkElementService {
      * 字符串形式的若干坐标，每个字符串形式的坐标的分割标记为";"
      */
     public static final String POINT_SPLITTER = ";";
+    /**
+     * 网格服务
+     */
+    @Autowired
+    private GridService gridService;
 
     /**
      * what:    根据铁路路网元素信息生成网格，并关联元素与网格. <br/>
@@ -154,4 +161,27 @@ public class RailNetworkElementService {
         // 移除最后添加的POINT_SPLITTER
         return stringBuffer.substring(0, stringBuffer.length() - 1);
     }
+
+    /**
+     * what:    检测两个铁路路网元素是否邻接. <br/>
+     * 通过GridService判断网格间关系. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public boolean adjoin(IRailNetworkElement elementA, IRailNetworkElement elementB) {
+        // 判断elementA是否已生成网格
+        if (elementA.getGrid() == null) {
+            updateGridOfElement(elementA);
+        }
+        // 判断elementB是否已生成网格
+        if (elementB.getGrid() == null) {
+            updateGridOfElement(elementB);
+        }
+        // 通过网格服务判断是否邻接
+        return gridService.touches(elementA.getGrid(), elementB.getGrid());
+    }
+
 }

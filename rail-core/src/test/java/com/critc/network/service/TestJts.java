@@ -61,6 +61,12 @@ public class TestJts {
         // PolygonA是一个（0,0），（0,100），（100,100），（100,0），（0,0）的多边形
         Polygon polygonA = geometryFactory.createPolygon(new Coordinate[]{new Coordinate(0, 0), new Coordinate(0, 100), new Coordinate(100, 100), new Coordinate(100, 0), new Coordinate(0, 0)});
 
+        // 自我判定
+        Assert.assertTrue(polygonA.contains(polygonA));
+        Assert.assertTrue(polygonA.intersects(polygonA));
+        Assert.assertFalse(polygonA.touches(polygonA));
+        Assert.assertTrue(polygonA.disjoint(polygonA));
+
         // PolygonB是一个empty polygon
         Polygon polygonB = geometryFactory.createPolygon(new Coordinate[0]);
         Assert.assertFalse(polygonA.contains(polygonB));
