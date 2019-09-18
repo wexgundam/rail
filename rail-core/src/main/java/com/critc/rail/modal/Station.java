@@ -61,13 +61,13 @@ public class Station implements IRailNetworkElement {
     /**
      * 是否为路局分界口
      */
-    private boolean bureauPartingStation;
+    private boolean bureauParting;
     /**
-     * 名称全拼音吗
+     * 名称全拼音码
      */
     private String namePinyin;
     /**
-     * 名称首字母拼音吗
+     * 名称首字母拼音码
      */
     private String nameInitialPinyin;
     /**
@@ -127,7 +127,7 @@ public class Station implements IRailNetworkElement {
                 ", jurisdictionBureauName='" + jurisdictionBureauName + '\'' +
                 ", jurisdictionTrainlineDeportId=" + jurisdictionTrainlineDeportId +
                 ", jurisdictionTrainlineDeportName='" + jurisdictionTrainlineDeportName + '\'' +
-                ", bureauPartingStation=" + bureauPartingStation +
+                ", bureauParting=" + bureauParting +
                 ", namePinyin='" + namePinyin + '\'' +
                 ", nameInitialPinyin='" + nameInitialPinyin + '\'' +
                 ", telegraphCode='" + telegraphCode + '\'' +
@@ -260,12 +260,12 @@ public class Station implements IRailNetworkElement {
         this.jurisdictionTrainlineDeportName = jurisdictionTrainlineDeportName;
     }
 
-    public boolean isBureauPartingStation() {
-        return bureauPartingStation;
+    public boolean isBureauParting() {
+        return bureauParting;
     }
 
-    public void setBureauPartingStation(boolean bureauPartingStation) {
-        this.bureauPartingStation = bureauPartingStation;
+    public void setBureauParting(boolean bureauParting) {
+        this.bureauParting = bureauParting;
     }
 
     public String getNamePinyin() {

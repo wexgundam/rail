@@ -8,7 +8,6 @@ package com.critc.rail.service;
 import com.critc.network.modal.Grid;
 import com.critc.rail.modal.Link;
 import com.critc.rail.modal.Station;
-import com.critc.rail.modal.Yard;
 import com.critc.util.date.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,14 +29,12 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/spring/applicationContext-database.xml")
-public class TestStationService {
-    @Autowired
-    private StationService stationService;
+public class TestLinkService {
     @Autowired
     private LinkService linkService;
 
     @Test
-    public void testStationsAdjoin() {
+    public void testAdjoinStations() {
         //点形车站
         Station stationA = new Station();
         stationA.setAnchorPointsString("0@0");
@@ -65,68 +62,71 @@ public class TestStationService {
             linkService.addOne(link);
         }
 
-
         //车站A、B邻接
         System.out.println(DateUtil.getSystemTime());
-        boolean result = stationService.adjoin(stationA, stationB);
+        boolean result = linkService.adjoin(stationA, stationB);
         Assert.assertTrue(result);
         System.out.println(DateUtil.getSystemTime());
 
         //车站A、D邻接
         System.out.println(DateUtil.getSystemTime());
-        result = stationService.adjoin(stationA, stationD);
+        result = linkService.adjoin(stationA, stationD);
         Assert.assertTrue(result);
         System.out.println(DateUtil.getSystemTime());
 
         //车站A、C不邻接
         System.out.println(DateUtil.getSystemTime());
-        result = stationService.adjoin(stationA, stationC);
+        result = linkService.adjoin(stationA, stationC);
         Assert.assertFalse(result);
         System.out.println(DateUtil.getSystemTime());
     }
 
     @Test
-    public void testStationJurisdictionYard() {
-        //多边形车站
-        Station station = new Station();
-        station.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
-        station.setAnchorPointsString("0@0;0@20;20@20;20@0");
-
-        // station管辖车场A
-        Yard yardA = new Yard();
-        yardA.setAnchorPointsString("5@5");
-        Assert.assertTrue(stationService.jurisdiction(station, yardA));
-
-        // station不管辖车场B
-        Yard yardB = new Yard();
-        yardB.setAnchorPointsString("5@50");
-        Assert.assertFalse(stationService.jurisdiction(station, yardB));
-    }
-
-    @Test
-    public void testStationLinkAdjoin() {
+    public void testAdjoinStationsWithLinks() {
         //点形车站
         Station stationA = new Station();
         stationA.setAnchorPointsString("0@0");
         Station stationB = new Station();
         stationB.setAnchorPointsString("100@100");
         Station stationC = new Station();
-        stationC.setAnchorPointsString("50@30");
+        stationC.setAnchorPointsString("30@40");
         //多边形车站
         Station stationD = new Station();
         stationD.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
         stationD.setAnchorPointsString("0@0;0@20;10@20");
-        Station stationE = new Station();
-        stationE.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
-        stationE.setAnchorPointsString("20@10;20@20;10@20");
 
+        List<Link> links = new ArrayList<>();
         Link link = new Link();
         link.setAnchorPointsString("0@0;100@100");
+        links.add(link);
+        link = new Link();
+        link.setAnchorPointsString("20@20;30@30");
+        links.add(link);
+        link = new Link();
+        link.setAnchorPointsString("200@200;300@300;400@400;23@53");
+        links.add(link);
+        for (int index = 0; index < 1000; index++) {
+            link = new Link();
+            link.setAnchorPointsString("200@200;300@300;400@400;23@53");
+            links.add(link);
+        }
 
-        Assert.assertTrue(stationService.adjoin(stationA, link));
-        Assert.assertTrue(stationService.adjoin(stationB, link));
-        Assert.assertFalse(stationService.adjoin(stationC, link));
-        Assert.assertTrue(stationService.adjoin(stationD, link));
-        Assert.assertFalse(stationService.adjoin(stationE, link));
+        //车站A、B邻接
+        System.out.println(DateUtil.getSystemTime());
+        boolean result = linkService.adjoin(links, stationA, stationB);
+        Assert.assertTrue(result);
+        System.out.println(DateUtil.getSystemTime());
+
+        //车站A、D邻接
+        System.out.println(DateUtil.getSystemTime());
+        result = linkService.adjoin(links, stationA, stationD);
+        Assert.assertTrue(result);
+        System.out.println(DateUtil.getSystemTime());
+
+        //车站A、C不邻接
+        System.out.println(DateUtil.getSystemTime());
+        result = linkService.adjoin(links, stationA, stationC);
+        Assert.assertFalse(result);
+        System.out.println(DateUtil.getSystemTime());
     }
 }

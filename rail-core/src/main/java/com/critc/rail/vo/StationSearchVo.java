@@ -33,7 +33,7 @@ public class StationSearchVo {
     /**
      * 管辖行车调度台Id等于
      */
-    private String jurisdictionTrainlineDeportIdEqual;
+    private int jurisdictionTrainlineDeportIdEqual;
     /**
      * 电报码等于
      */
@@ -42,6 +42,10 @@ public class StationSearchVo {
      * 拼音码like
      */
     private String pinyinLike;
+    /**
+     * 是否为路局分界口
+     */
+    private boolean bureauPartingStation;
 
     public String getNameEqual() {
         return nameEqual;
@@ -67,11 +71,11 @@ public class StationSearchVo {
         this.jurisdictionBureauIdEqual = jurisdictionBureauIdEqual;
     }
 
-    public String getJurisdictionTrainlineDeportIdEqual() {
+    public int getJurisdictionTrainlineDeportIdEqual() {
         return jurisdictionTrainlineDeportIdEqual;
     }
 
-    public void setJurisdictionTrainlineDeportIdEqual(String jurisdictionTrainlineDeportIdEqual) {
+    public void setJurisdictionTrainlineDeportIdEqual(int jurisdictionTrainlineDeportIdEqual) {
         this.jurisdictionTrainlineDeportIdEqual = jurisdictionTrainlineDeportIdEqual;
     }
 
@@ -97,5 +101,13 @@ public class StationSearchVo {
 
     public void setIdEqual(int idEqual) {
         this.idEqual = idEqual;
+    }
+
+    public boolean isBureauPartingStation() {
+        return bureauPartingStation;
+    }
+
+    public void setBureauPartingStation(boolean bureauPartingStation) {
+        this.bureauPartingStation = bureauPartingStation;
     }
 }
