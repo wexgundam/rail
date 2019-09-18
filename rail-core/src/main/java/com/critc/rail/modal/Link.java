@@ -10,14 +10,14 @@ import com.critc.network.modal.Grid;
 import java.util.Date;
 
 /**
- * what:    调度视角的铁路局. <br/>
+ * what:    调度视角的节点间. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
  *
  * @author 靳磊 created on 2019/9/11
  */
-public class Bureau implements IRailNetworkElement {
+public class Link implements IRailNetworkElement {
     /**
      * 主键
      */
@@ -39,9 +39,9 @@ public class Bureau implements IRailNetworkElement {
      */
     private String telegraphCode;
     /**
-     * 网格空间几何类型，默认是多边形类型
+     * 网格空间几何类型，默认是线类型
      */
-    private int gridGeometryType = Grid.GEOMETRY_TYPE_POLYGON;
+    private int gridGeometryType = Grid.GEOMETRY_TYPE_LINE_STRING;
     /**
      * 基点坐标的字符串表示，表示方式：x@y，"@"为分隔符
      */
@@ -84,7 +84,7 @@ public class Bureau implements IRailNetworkElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Bureau bureau = (Bureau) o;
+        Link bureau = (Link) o;
 
         return id == bureau.id;
     }
@@ -96,7 +96,7 @@ public class Bureau implements IRailNetworkElement {
 
     @Override
     public String toString() {
-        return "Bureau{" +
+        return "Link{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", shortName='" + shortName + '\'' +

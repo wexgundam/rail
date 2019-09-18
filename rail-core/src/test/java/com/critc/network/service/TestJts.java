@@ -3,7 +3,11 @@ package com.critc.network.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
 /**
@@ -65,7 +69,7 @@ public class TestJts {
         Assert.assertTrue(polygonA.contains(polygonA));
         Assert.assertTrue(polygonA.intersects(polygonA));
         Assert.assertFalse(polygonA.touches(polygonA));
-        Assert.assertTrue(polygonA.disjoint(polygonA));
+        Assert.assertFalse(polygonA.disjoint(polygonA));
 
         // PolygonB是一个empty polygon
         Polygon polygonB = geometryFactory.createPolygon(new Coordinate[0]);
@@ -121,5 +125,28 @@ public class TestJts {
         Assert.assertFalse(polygonA.intersects(polygonH));
         Assert.assertFalse(polygonA.touches(polygonH));
         Assert.assertTrue(polygonA.disjoint(polygonH));
+    }
+
+    @Test
+    public void testTouch() {
+        // 点和线互切于1点
+        Point point = geometryFactory.createPoint(new Coordinate(0, 0));
+        LineString lineString = geometryFactory.createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 100)});
+        LineString lineString2 = geometryFactory.createLineString(new Coordinate[]{new Coordinate(100, 100), new Coordinate(200, 200)});
+        Assert.assertTrue(lineString.touches(point));
+        Assert.assertTrue(point.touches(lineString));
+
+        // 点和多边形互切于1点
+        Polygon polygon = geometryFactory.createPolygon(new Coordinate[]{new Coordinate(0, 0), new Coordinate(0, 0), new Coordinate(0, 0), new Coordinate(0, 0)});
+        Assert.assertTrue(polygon.touches(point));
+        Assert.assertTrue(point.touches(polygon));
+
+        // 线和多边形互切于1点
+        Assert.assertTrue(polygon.touches(lineString));
+        Assert.assertTrue(lineString.touches(polygon));
+
+        // 缩成一点的polygon和缩成一条线的polygon不相切
+        Polygon polygonB = geometryFactory.createPolygon(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 100), new Coordinate(0, 0), new Coordinate(0, 0)});
+        Assert.assertFalse(polygon.touches(polygonB));
     }
 }

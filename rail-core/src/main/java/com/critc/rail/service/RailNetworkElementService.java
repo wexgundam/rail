@@ -20,6 +20,7 @@ import java.util.List;
  * 1. 生成铁路路网元素对应的网格
  * 2. 根据网格生成铁路路网元素对应的坐标属性
  * 3. 判断两个路网元素是否邻接
+ * 4. 检测铁路路网元素A是否管辖铁路路网元素B
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -55,6 +56,8 @@ public class RailNetworkElementService {
         Grid grid = new Grid();
         //设置标识
         grid.setId(element.getId());
+        //设置空间几何类型
+        grid.setGeometryType(element.getGridGeometryType());
         //将元素基点坐标的字符串形式转为向量形式
         grid.setBasePointVector(toPointVector(element.getBasePointString()));
         //将元素锚点坐标的字符串形式转为向量形式
@@ -63,6 +66,20 @@ public class RailNetworkElementService {
         grid.setOriginal(element);
         //关联元素和网格
         element.setGrid(grid);
+    }
+
+    /**
+     * what:    检测给定元素是否已生成对应网格，否则生成网格. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/17
+     */
+    private void checkGrid(IRailNetworkElement element) {
+        if (element.getGrid() == null) {
+            updateGridOfElement(element);
+        }
     }
 
     /**
@@ -93,10 +110,14 @@ public class RailNetworkElementService {
      * @author 靳磊 created on 2019/9/3
      */
     public PointVector toPointVector(String pointString) {
-        String[] pointStringValueArray = pointString.split(POINT_XY_SPLITTER);
-        PointVector pointVector = new PointVector();
-        pointVector.setPoint(Double.parseDouble(pointStringValueArray[0]), Double.parseDouble(pointStringValueArray[1]));
-        return pointVector;
+        try {
+            String[] pointStringValueArray = pointString.split(POINT_XY_SPLITTER);
+            PointVector pointVector = new PointVector();
+            pointVector.setPoint(Double.parseDouble(pointStringValueArray[0]), Double.parseDouble(pointStringValueArray[1]));
+            return pointVector;
+        } catch (Exception e) {//有异常返回null;
+            return null;
+        }
     }
 
     /**
@@ -115,7 +136,10 @@ public class RailNetworkElementService {
         String[] pointStringArray = pointsString.split(POINT_SPLITTER);
         List<PointVector> pointVectors = new ArrayList<>();
         for (String pointString : pointStringArray) {
-            pointVectors.add(toPointVector(pointString));
+            PointVector pointVector = toPointVector(pointString);
+            if (pointVector != null) {
+                pointVectors.add(pointVector);
+            }
         }
         return pointVectors;
     }
@@ -173,15 +197,29 @@ public class RailNetworkElementService {
      */
     public boolean adjoin(IRailNetworkElement elementA, IRailNetworkElement elementB) {
         // 判断elementA是否已生成网格
-        if (elementA.getGrid() == null) {
-            updateGridOfElement(elementA);
-        }
+        checkGrid(elementA);
         // 判断elementB是否已生成网格
-        if (elementB.getGrid() == null) {
-            updateGridOfElement(elementB);
-        }
+        checkGrid(elementB);
         // 通过网格服务判断是否邻接
         return gridService.touches(elementA.getGrid(), elementB.getGrid());
     }
 
+    /**
+     * what:    检测铁路路网元素A是否管辖铁路路网元素B. <br/>
+     * 管辖全根据网格范围判断，元素B在元素A的范围内，A具有对B的管辖全. <br/>
+     * 通过GridService判断网格间关系. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public boolean jurisdiction(IRailNetworkElement elementA, IRailNetworkElement elementB) {
+        // 判断elementA是否已生成网格
+        checkGrid(elementA);
+        // 判断elementB是否已生成网格
+        checkGrid(elementB);
+        // 通过网格服务判断是否邻接
+        return gridService.contains(elementA.getGrid(), elementB.getGrid());
+    }
 }

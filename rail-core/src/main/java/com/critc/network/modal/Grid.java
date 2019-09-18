@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * what:    <b>网格:</b>铁路路网所有元素的基本特征，每一元素都可视为一个网格。<br/>
  * 网格仅含有与网络有关的信息，不含任何业务信息。 <br/>
+ * 空间几何类型，据此创建对应的空间几何对象，目前支持POLYGON、LINESTRING、POINT
  * 基点：在小比例尺时，网格较小，可视为点，基点是网格作为点时的坐标。 <br/>
  * 锚点：网格控制点的集合。控制点能够描述网格的位置、范围。 <br/>
  * <b>网格间关系：</b>网格与网格之间可以是单点先交、多点相交、相切、包含和分离五种关系.<br/>
@@ -22,9 +23,25 @@ import java.util.List;
  */
 public class Grid {
     /**
+     * 空间几何类型：点
+     */
+    public static final int GEOMETRY_TYPE_POINT = 1;
+    /**
+     * 空间几何类型：线
+     */
+    public static final int GEOMETRY_TYPE_LINE_STRING = 2;
+    /**
+     * 空间几何类型：多边形
+     */
+    public static final int GEOMETRY_TYPE_POLYGON = 3;
+    /**
      * 主键：唯一性标识。
      */
     private int id;
+    /**
+     * 空间几何类型
+     */
+    private int geometryType;
     /**
      * 基点坐标的向量表示
      */
@@ -57,6 +74,7 @@ public class Grid {
     public String toString() {
         return "Grid{" +
                 "id=" + id +
+                ", geometryType=" + geometryType +
                 ", basePointVector=" + basePointVector +
                 ", anchorPointVectors=" + anchorPointVectors +
                 ", original=" + original +
@@ -179,5 +197,13 @@ public class Grid {
 
     public void setAnchorPointVectors(List<PointVector> anchorPointVectors) {
         this.anchorPointVectors = anchorPointVectors;
+    }
+
+    public int getGeometryType() {
+        return geometryType;
+    }
+
+    public void setGeometryType(int geometryType) {
+        this.geometryType = geometryType;
     }
 }

@@ -10,6 +10,8 @@ import com.critc.network.modal.PointVector;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,7 @@ public class GridService {
     /**
      * 定义日志输出位置
      */
-    private static Logger logger = LoggerFactory.getLogger("serviceLog");
+    private Logger logger = LoggerFactory.getLogger("serviceLog");
 
     /**
      * 声明JTS的GeometryFactory
@@ -53,6 +55,7 @@ public class GridService {
 
     /**
      * what: 根据网格锚点坐标生成对应的几何图形. <br/>
+     * 1.根据grid的空间几何类型生成对应的几何对象
      * 1.生成的图形为JTS的Polygon.<br/>
      * 2.使用坐标数组方法生成Polygon.<br/>
      * 3.Polygon要求至少包含4个坐标点，且第一个点和最后一个点坐标必须相同.<br/>
@@ -65,52 +68,103 @@ public class GridService {
      *
      * @author 靳磊 created on 2019/9/9
      */
-    private Geometry createAnchorGeometry(Grid grid) {
-        // 获取锚点向量个数
-        int anchorPointVectorsSize = grid.getAnchorPointVectors().size();
-
-        if (anchorPointVectorsSize == 0) {
-            // 如果锚点数为0，创建empty polygon
-            return geometryFactory.createPolygon();
-        } else if (anchorPointVectorsSize == 1 || anchorPointVectorsSize == 2) {
-            //如果锚点数为1个或2个，不够的坐标数用第一锚点补足
-
-            // 构建包含4个元素的坐标数组
-            Coordinate[] coordinates = new Coordinate[4];
-
-            //遍历锚点生产数组坐标
-            for (int index = 0; index < 4; index++) {
-                if (index < anchorPointVectorsSize) {
-                    PointVector pointVector = grid.getAnchorPointVector(index);
-                    Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
-                    coordinates[index] = coordinate;
-                } else {
-                    //不够的坐标数用第一锚点补足
-                    PointVector pointVector = grid.getAnchorPointVector(0);
-                    Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
-                    coordinates[index] = coordinate;
-                }
-            }
-
-            Polygon polygon = geometryFactory.createPolygon(coordinates);
-            return polygon;
-        } else {
-            // 构建坐标点数组，数组元素较锚点元素多一个，最后一个坐标为第一个锚点的坐标
-            Coordinate[] coordinates = new Coordinate[anchorPointVectorsSize + 1];
-            for (int index = 0; index < anchorPointVectorsSize; index++) {
-                PointVector pointVector = grid.getAnchorPointVector(index);
-                Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
-                coordinates[index] = coordinate;
-            }
-
-            // 最后一个坐标为第一个锚点的坐标
-            PointVector pointVector = grid.getAnchorPointVector(0);
-            Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
-            coordinates[anchorPointVectorsSize] = coordinate;
-
-            Polygon polygon = geometryFactory.createPolygon(coordinates);
-            return polygon;
+    private Geometry createGeometry(Grid grid) {
+        //根据类型创建几何对象，否则返回空
+        switch (grid.getGeometryType()) {
+            case Grid.GEOMETRY_TYPE_POINT:
+                return createPointGeometry(grid);
+            case Grid.GEOMETRY_TYPE_LINE_STRING:
+                return createLineStringGeometry(grid);
+            case Grid.GEOMETRY_TYPE_POLYGON:
+                return createPolygonGeometry(grid);
+            default:
+                // 没有对应的对象创建空几何图形
+                return createEmptyGeometry();
         }
+    }
+
+    /**
+     * what:    根据网格锚点创建点类型的几何对象. <br/>
+     * 1. 如果点类型的锚点数少于3个，用第一个锚点创建一个Point. <br/>
+     * 2. 如果点类型的锚点数大于等于3个，用第所有锚点创建一个Polygon. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/17
+     */
+    private Geometry createPointGeometry(Grid grid) {
+        // 用第一个锚点创建一个Point
+        PointVector firstAnchorPointVector = grid.getAnchorPointVector(0);
+        Point point = geometryFactory.createPoint(new Coordinate(firstAnchorPointVector.getPointX(), firstAnchorPointVector.getPointY()));
+        return point;
+    }
+
+    /**
+     * what:    根据网格锚点创建线类型的几何对象. <br/>
+     * 1. 如果点类型的锚点数少于3个，用第一个锚点创建一个Point. <br/>
+     * 2. 如果点类型的锚点数大于等于3个，用第所有锚点创建一个Polygon. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/17
+     */
+    private Geometry createLineStringGeometry(Grid grid) {
+        int anchorPointVectorsSize = grid.getAnchorPointVectors().size();
+        // 构建坐标点数组
+        Coordinate[] coordinates = new Coordinate[anchorPointVectorsSize];
+        for (int index = 0; index < anchorPointVectorsSize; index++) {
+            PointVector pointVector = grid.getAnchorPointVector(index);
+            Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
+            coordinates[index] = coordinate;
+        }
+
+        LineString lineString = geometryFactory.createLineString(coordinates);
+        return lineString;
+    }
+
+    /**
+     * what:    根据网格锚点创建线类型的几何对象. <br/>
+     * 1. 如果点类型的锚点数少于3个，用第一个锚点创建一个Point. <br/>
+     * 2. 如果点类型的锚点数大于等于3个，用第所有锚点创建一个Polygon. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/17
+     */
+    private Geometry createPolygonGeometry(Grid grid) {
+        int anchorPointVectorsSize = grid.getAnchorPointVectors().size();
+        // 构建坐标点数组，数组元素较锚点元素多一个，最后一个坐标为第一个锚点的坐标
+        Coordinate[] coordinates = new Coordinate[anchorPointVectorsSize + 1];
+        for (int index = 0; index < anchorPointVectorsSize; index++) {
+            PointVector pointVector = grid.getAnchorPointVector(index);
+            Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
+            coordinates[index] = coordinate;
+        }
+
+        // 坐标的数组最后一个坐标为第一个锚点的坐标
+        PointVector pointVector = grid.getAnchorPointVector(0);
+        Coordinate coordinate = new Coordinate(pointVector.getPointX(), pointVector.getPointY());
+        coordinates[anchorPointVectorsSize] = coordinate;
+
+        Polygon polygon = geometryFactory.createPolygon(coordinates);
+        return polygon;
+    }
+
+    /**
+     * what:    根据网格锚点创建线类型的几何对象. <br/>
+     * 1. 如果点类型的锚点数少于3个，用第一个锚点创建一个Point. <br/>
+     * 2. 如果点类型的锚点数大于等于3个，用第所有锚点创建一个Polygon. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/17
+     */
+    private Geometry createEmptyGeometry() {
+        return geometryFactory.createGeometryCollection();
     }
 
     /**
@@ -122,8 +176,8 @@ public class GridService {
      * @author 靳磊 created on 2019/9/9
      */
     public boolean contains(Grid gridA, Grid gridB) {
-        Geometry gridAAnchorGeometry = createAnchorGeometry(gridA);
-        Geometry gridBAnchorGeometry = createAnchorGeometry(gridB);
+        Geometry gridAAnchorGeometry = createGeometry(gridA);
+        Geometry gridBAnchorGeometry = createGeometry(gridB);
         return gridAAnchorGeometry.contains(gridBAnchorGeometry);
     }
 
@@ -136,8 +190,8 @@ public class GridService {
      * @author 靳磊 created on 2019/9/9
      */
     public boolean touches(Grid gridA, Grid gridB) {
-        Geometry gridAAnchorGeometry = createAnchorGeometry(gridA);
-        Geometry gridBAnchorGeometry = createAnchorGeometry(gridB);
+        Geometry gridAAnchorGeometry = createGeometry(gridA);
+        Geometry gridBAnchorGeometry = createGeometry(gridB);
         return gridAAnchorGeometry.touches(gridBAnchorGeometry);
     }
 
@@ -234,16 +288,13 @@ public class GridService {
 
         @Override
         public Callable<Grid> createTask(Grid gridA, Grid gridB) {
-            return new Callable<Grid>() {
-                @Override
-                public Grid call() throws Exception {
-                    // Grid对应的Geometry
-                    Geometry gridAGeometry = createAnchorGeometry(gridA);
-                    // Target Grid对应的Geometry
-                    Geometry gridBGeometry = createAnchorGeometry(gridB);
-                    // 如果包含，返回Grid；否则返回null；
-                    return gridAGeometry.contains(gridBGeometry) ? gridA : null;
-                }
+            return () -> {
+                // Grid对应的Geometry
+                Geometry gridAGeometry = createGeometry(gridA);
+                // Target Grid对应的Geometry
+                Geometry gridBGeometry = createGeometry(gridB);
+                // 如果包含，返回Grid；否则返回null；
+                return gridAGeometry.contains(gridBGeometry) ? gridA : null;
             };
         }
     }
@@ -254,16 +305,13 @@ public class GridService {
     class GridTouchesTaskFacatory implements IGridServiceTaskFactory {
         @Override
         public Callable<Grid> createTask(Grid gridA, Grid gridB) {
-            return new Callable<Grid>() {
-                @Override
-                public Grid call() throws Exception {
-                    // Grid对应的Geometry
-                    Geometry gridAGeometry = createAnchorGeometry(gridA);
-                    // Target Grid对应的Geometry
-                    Geometry gridBGeometry = createAnchorGeometry(gridB);
-                    // 如果相切，返回Grid；否则返回null；
-                    return gridAGeometry.touches(gridBGeometry) ? gridA : null;
-                }
+            return () -> {
+                // Grid对应的Geometry
+                Geometry gridAGeometry = createGeometry(gridA);
+                // Target Grid对应的Geometry
+                Geometry gridBGeometry = createGeometry(gridB);
+                // 如果相切，返回Grid；否则返回null；
+                return gridAGeometry.touches(gridBGeometry) ? gridA : null;
             };
         }
     }

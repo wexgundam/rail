@@ -6,14 +6,14 @@
 package com.critc.rail.vo;
 
 /**
- * what:    路局查询条件Vo. <br/>
+ * what:    车站查询条件Vo. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
  *
  * @author 靳磊 created on 2019/9/11
  */
-public class BureauSearchVo {
+public class StationSearchVo {
     /**
      * id等于
      */
@@ -27,17 +27,21 @@ public class BureauSearchVo {
      */
     private String nameLike;
     /**
-     * 简称等于
+     * 管辖局Id等于
      */
-    private String shortNameEqual;
+    private int jurisdictionBureauIdEqual;
     /**
-     * 编码等于
+     * 管辖行车调度台Id等于
      */
-    private int codeEqual;
+    private String jurisdictionTrainlineDeportIdEqual;
     /**
      * 电报码等于
      */
     private String telegraphCodeEqual;
+    /**
+     * 拼音码like
+     */
+    private String pinyinLike;
 
     public String getNameEqual() {
         return nameEqual;
@@ -55,20 +59,20 @@ public class BureauSearchVo {
         this.nameLike = nameLike;
     }
 
-    public String getShortNameEqual() {
-        return shortNameEqual;
+    public int getJurisdictionBureauIdEqual() {
+        return jurisdictionBureauIdEqual;
     }
 
-    public void setShortNameEqual(String shortNameEqual) {
-        this.shortNameEqual = shortNameEqual;
+    public void setJurisdictionBureauIdEqual(int jurisdictionBureauIdEqual) {
+        this.jurisdictionBureauIdEqual = jurisdictionBureauIdEqual;
     }
 
-    public int getCodeEqual() {
-        return codeEqual;
+    public String getJurisdictionTrainlineDeportIdEqual() {
+        return jurisdictionTrainlineDeportIdEqual;
     }
 
-    public void setCodeEqual(int codeEqual) {
-        this.codeEqual = codeEqual;
+    public void setJurisdictionTrainlineDeportIdEqual(String jurisdictionTrainlineDeportIdEqual) {
+        this.jurisdictionTrainlineDeportIdEqual = jurisdictionTrainlineDeportIdEqual;
     }
 
     public String getTelegraphCodeEqual() {
@@ -77,6 +81,14 @@ public class BureauSearchVo {
 
     public void setTelegraphCodeEqual(String telegraphCodeEqual) {
         this.telegraphCodeEqual = telegraphCodeEqual;
+    }
+
+    public String getPinyinLike() {
+        return pinyinLike;
+    }
+
+    public void setPinyinLike(String pinyinLike) {
+        this.pinyinLike = pinyinLike;
     }
 
     public int getIdEqual() {

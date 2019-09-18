@@ -14,24 +14,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
- * what:    铁路局服务. <br/>
- * 1. 检测两个路局是否邻接. <br/>
- * 2. 获取两个路局邻接行车调度台. <br/>
- * 3. 获取两个路局的邻接口车站. <br/>
- * 3. 获取两个路局的路局分界口车站. <br/>
- * 4. 获取给定路局的邻接路局. <br/>
- * 5. 获取给定路局所辖行车调度台. <br/>
- * 6. 获取给定路局所辖车站. <br/>
- * 7. 获取给定路局所辖路局分界口车站. <br/>
- * 9. 检测给定路局是否是给定行调台的管辖局. <br/>
- * 10. 检测给定路局是否是给定车站的管辖局. <br/>
- * 13. 新增路局. <br/>
- * 14. 更新路局. <br/>
- * 15. 删除路局. <br/>
- * 15. 查询路局. <br/>
+ * what:    调度视角的铁路局服务. <br/>
+ * # 检测两个路局是否邻接. <br/>
+ * # 检测给定路局是否管辖给定行车调度台. <br/>
+ * # 检测给定路局是否管辖给定车站. <br/>
+ * # 获取给定路局的邻接路局. <br/>
+ * # 新增路局. <br/>
+ * # 更新路局. <br/>
+ * # 删除路局. <br/>
+ * # 查询路局. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -60,66 +53,29 @@ public class BureauService {
     }
 
     /**
-     * what:    获取两个路局邻接行车调度台. <br/>
-     * 返回值为List，元素为Vector. <br/>
-     * Vector[0]为bureauA管辖的行车调度台. <br/>
-     * Vector[1]为bureauB管辖的行车调度台. <br/>
+     * what:    检测给定路局是否管辖给定行车调度台. <br/>
+     * 通过GridService判断网格间关系. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Vector<TrainlineDeport>> getAdjoinTrainlineDeports(Bureau bureauA, Bureau bureauB, List<TrainlineDeport> trainlineDeports) {
-        // 获取bureauA管辖的行调台
-        List<TrainlineDeport> bureaATrainlineDeports = getTrainlineDeports(bureauA, trainlineDeports);
-        // 获取bureauB管辖的行调台
-        List<TrainlineDeport> bureaBTrainlineDeports = getTrainlineDeports(bureauB, trainlineDeports);
-
-        // bureauA行车调度台与BureauB邻接
-        // bureauB行车调度台与BureauA邻接
-
-        throw new UnsupportedOperationException();
+    public boolean jurisdiction(Bureau bureau, TrainlineDeport trainlineDeport) {
+        return railNetworkElementService.jurisdiction(bureau, trainlineDeport);
     }
 
     /**
-     * what:    获取两个路局邻接车站. <br/>
-     * 返回值为List，元素为Vector. <br/>
-     * Vector[0]为bureauA管辖的车站. <br/>
-     * Vector[1]为bureauB管辖的车站. <br/>
+     * what:    检测给定路局是否管辖给定车站. <br/>
+     * 通过GridService判断网格间关系. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Vector<Station>> getAdjoinStations(Bureau bureauA, Bureau bureauB, List<Station> stations) {
-        // 获取bureauA管辖的车站
-        List<Station> bureaAStations = getStations(bureauA, stations);
-        // 获取bureauB管辖的车站
-        List<Station> bureaBStations = getStations(bureauB, stations);
-
-        // bureauA车站与BureauB邻接
-        // bureauB车站与BureauA邻接
-
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * what:    获取两个路局的路局分界口车站. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public List<Station> getBureauPartingStations(Bureau bureauA, Bureau bureauB, List<Station> stations) {
-        // 获取bureauA管辖的路局分界口车站
-        List<Station> bureaABureaPartingStations = getBureauPartingStations(bureauA, stations);
-        // 获取bureauB管辖的路局分界口车站
-        List<Station> bureaBBureaPartingStations = getBureauPartingStations(bureauB, stations);
-
-        throw new UnsupportedOperationException();
+    public boolean jurisdiction(Bureau bureau, Station station) {
+        return railNetworkElementService.jurisdiction(bureau, station);
     }
 
     /**
@@ -144,42 +100,6 @@ public class BureauService {
     }
 
     /**
-     * what:    获取给定路局管辖的行车调度台. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public List<TrainlineDeport> getTrainlineDeports(Bureau bureau, List<TrainlineDeport> trainlineDeports) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * what:    获取给定路局管辖的车站. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public List<Station> getStations(Bureau bureau, List<Station> stations) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * what:    获取给定路局管辖的路局分界口车站. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public List<Station> getBureauPartingStations(Bureau bureau, List<Station> stations) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * what:    新增路局. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
@@ -188,7 +108,7 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public void add(Bureau bureau) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -200,7 +120,7 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public void update(Bureau bureau) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -212,7 +132,7 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public void delete(Bureau bureau) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -224,7 +144,9 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public Bureau get(int id) {
-        return null;
+        BureauSearchVo bureauSearchVo = new BureauSearchVo();
+        bureauSearchVo.setIdEqual(id);
+        return get(bureauSearchVo);
     }
 
     /**
@@ -236,7 +158,7 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public Bureau get(BureauSearchVo bureauSearchVo) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -248,6 +170,6 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<Bureau> getAll() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

@@ -32,101 +32,140 @@ public class TestGridService {
     GridService gridService;
 
     @Test
-    public void testContainsAndTouches() {
-        // 网格B完全内含与网格A，网格A包含网格B
-        Grid gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        Grid gridB = new Grid();
-        gridB.addAnchorPointVector(10, 10);
-        gridB.addAnchorPointVector(10, 20);
-        gridB.addAnchorPointVector(20, 20);
-        gridB.addAnchorPointVector(20, 10);
-        boolean result = gridService.contains(gridA, gridB);
+    public void testTouches() {
+        // 点类型网格
+        Grid gridPointA = new Grid();
+        gridPointA.setGeometryType(Grid.GEOMETRY_TYPE_POINT);
+        gridPointA.addAnchorPointVector(0, 0);
+        Grid gridPointB = new Grid();
+        gridPointB.setGeometryType(Grid.GEOMETRY_TYPE_POINT);
+        gridPointB.addAnchorPointVector(0, 0);
+        gridPointB.addAnchorPointVector(0, 100);
+        gridPointB.addAnchorPointVector(100, 100);
+        gridPointB.addAnchorPointVector(100, 0);
+
+        //点和点不相切
+        boolean result = gridService.touches(gridPointA, gridPointB);
+        Assert.assertFalse(result);
+        result = gridService.touches(gridPointB, gridPointA);
+        Assert.assertFalse(result);
+
+        // 线类型网格
+        Grid gridLineStringA = new Grid();
+        gridLineStringA.setGeometryType(Grid.GEOMETRY_TYPE_LINE_STRING);
+        gridLineStringA.addAnchorPointVector(0, 0);
+        gridLineStringA.addAnchorPointVector(10, 20);
+        gridLineStringA.addAnchorPointVector(20, 20);
+        gridLineStringA.addAnchorPointVector(20, 10);
+        Grid gridLineStringB = new Grid();
+        gridLineStringB.setGeometryType(Grid.GEOMETRY_TYPE_LINE_STRING);
+        gridLineStringB.addAnchorPointVector(20, 10);
+        gridLineStringB.addAnchorPointVector(30, 10);
+
+        //点和线相切
+        result = gridService.touches(gridPointA, gridLineStringA);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridLineStringA, gridPointA);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridPointB, gridLineStringB);
+        Assert.assertFalse(result);
+        result = gridService.touches(gridLineStringB, gridPointB);
+        Assert.assertFalse(result);
+
+        //线和线相切
+        result = gridService.touches(gridLineStringA, gridLineStringB);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridLineStringB, gridLineStringA);
         Assert.assertTrue(result);
 
-        // 网格B内切网格A于1点，网格A包含网格B
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        gridB.addAnchorPointVector(0, 0);
-        gridB.addAnchorPointVector(10, 20);
-        gridB.addAnchorPointVector(20, 20);
-        result = gridService.contains(gridA, gridB);
+        // 多边形类型网格
+        Grid gridPolygonA = new Grid();
+        gridPolygonA.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
+        gridPolygonA.addAnchorPointVector(0, 0);
+        gridPolygonA.addAnchorPointVector(-10, -20);
+        gridPolygonA.addAnchorPointVector(-20, -20);
+        Grid gridPolygonB = new Grid();
+        gridPolygonB.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
+        gridPolygonB.addAnchorPointVector(-20, -20);
+        gridPolygonB.addAnchorPointVector(-100, -200);
+        gridPolygonB.addAnchorPointVector(-200, -30);
+
+        //点和多边形相切
+        result = gridService.touches(gridPointA, gridPolygonA);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridPolygonA, gridPointA);
         Assert.assertTrue(result);
 
-        // 网格A不包含但外切网格B于1点
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        gridB.addAnchorPointVector(0, 0);
-        gridB.addAnchorPointVector(-10, -20);
-        gridB.addAnchorPointVector(-20, -20);
-        result = gridService.contains(gridA, gridB);
-        Assert.assertFalse(result);
-        result = gridService.touches(gridA, gridB);
+        //线和多边形相切
+        result = gridService.touches(gridLineStringA, gridPolygonA);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridPolygonA, gridLineStringA);
         Assert.assertTrue(result);
 
-        // 网格A不包含但外切网格B
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        gridB.addAnchorPointVector(-10, -10);
-        gridB.addAnchorPointVector(-10, -20);
-        gridB.addAnchorPointVector(-20, -20);
-        result = gridService.contains(gridA, gridB);
-        Assert.assertFalse(result);
-        result = gridService.touches(gridA, gridB);
-        Assert.assertFalse(result);
+        //多边形和多边形相切
+        result = gridService.touches(gridPolygonA, gridPolygonB);
+        Assert.assertTrue(result);
+        result = gridService.touches(gridPolygonA, gridPolygonB);
+        Assert.assertTrue(result);
+    }
 
-        // 网格A不包含且不外切0个锚点的网格B
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        result = gridService.contains(gridA, gridB);
-        Assert.assertFalse(result);
-        result = gridService.touches(gridA, gridB);
-        Assert.assertFalse(result);
+    @Test
+    public void testContains() {
+        // 点类型网格
+        Grid gridPointA = new Grid();
+        gridPointA.setGeometryType(Grid.GEOMETRY_TYPE_POINT);
+        gridPointA.addAnchorPointVector(0, 0);
+        Grid gridPointB = new Grid();
+        gridPointB.setGeometryType(Grid.GEOMETRY_TYPE_POINT);
+        gridPointB.addAnchorPointVector(5, 5);
+        // 线类型网格
+        Grid gridLineString = new Grid();
+        gridLineString.setGeometryType(Grid.GEOMETRY_TYPE_LINE_STRING);
+        gridLineString.addAnchorPointVector(0, 0);
+        gridLineString.addAnchorPointVector(10, 10);
+        gridLineString.addAnchorPointVector(20, 30);
+        gridLineString.addAnchorPointVector(20, 10);
+        // 多边形类型网格
+        Grid gridPolygonA = new Grid();
+        gridPolygonA.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
+        gridPolygonA.addAnchorPointVector(0, 0);
+        gridPolygonA.addAnchorPointVector(0, 100);
+        gridPolygonA.addAnchorPointVector(100, 100);
+        gridPolygonA.addAnchorPointVector(100, 0);
+        Grid gridPolygonB = new Grid();
+        gridPolygonB.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
+        gridPolygonB.addAnchorPointVector(0, 0);
+        gridPolygonB.addAnchorPointVector(0, 10);
+        gridPolygonB.addAnchorPointVector(20, 20);
+        Grid gridPolygonC = new Grid();
+        gridPolygonC.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
+        gridPolygonC.addAnchorPointVector(0, 0);
+        gridPolygonC.addAnchorPointVector(-10, -10);
+        gridPolygonC.addAnchorPointVector(20, 20);
 
-        // 网格A不包含且不外切1个锚点的网格B
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        gridB.addAnchorPointVector(-10, -10);
-        result = gridService.contains(gridA, gridB);
+        //点包含点
+        boolean result = gridService.contains(gridPointA, gridPointA);
+        Assert.assertTrue(result);
+        //线不包含边界点
+        result = gridService.contains(gridLineString, gridPointA);
         Assert.assertFalse(result);
-        result = gridService.touches(gridA, gridB);
+        //线包含中间点
+        result = gridService.contains(gridLineString, gridPointB);
+        Assert.assertTrue(result);
+        //多边形不包含边界点
+        result = gridService.contains(gridPolygonA, gridPointA);
         Assert.assertFalse(result);
-
-        // 网格A不包含且不外切2个锚点的网格B
-        gridA = new Grid();
-        gridA.addAnchorPointVector(0, 0);
-        gridA.addAnchorPointVector(0, 100);
-        gridA.addAnchorPointVector(100, 100);
-        gridA.addAnchorPointVector(100, 0);
-        gridB = new Grid();
-        gridB.addAnchorPointVector(-10, -10);
-        gridB.addAnchorPointVector(-20, -20);
-        result = gridService.contains(gridA, gridB);
-        Assert.assertFalse(result);
-        result = gridService.touches(gridA, gridB);
+        //多边形包含内部点
+        result = gridService.contains(gridPolygonA, gridPointB);
+        Assert.assertTrue(result);
+        //多边形包含线
+        result = gridService.contains(gridPolygonA, gridLineString);
+        Assert.assertTrue(result);
+        //多边形包含多边形
+        result = gridService.contains(gridPolygonA, gridPolygonB);
+        Assert.assertTrue(result);
+        //多边形不包含多边形
+        result = gridService.contains(gridPolygonA, gridPolygonC);
         Assert.assertFalse(result);
     }
 
@@ -137,6 +176,7 @@ public class TestGridService {
         for (int index = 0; index < 1000; index++) {
             // 网格B完全内含与网格A，网格A包含网格B
             Grid grid = new Grid();
+            grid.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
@@ -145,6 +185,7 @@ public class TestGridService {
         }
         // 模拟目标Grid，理论存在
         Grid targetGrid = new Grid();
+        targetGrid.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
         targetGrid.addAnchorPointVector(10, 10);
         targetGrid.addAnchorPointVector(10, 20);
         targetGrid.addAnchorPointVector(20, 20);
@@ -173,6 +214,7 @@ public class TestGridService {
         for (int index = 0; index < 1000; index++) {
             // 网格B完全内含与网格A，网格A包含网格B
             Grid grid = new Grid();
+            grid.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
             grid.addAnchorPointVector(100 * Math.random(), 100 * Math.random());
@@ -181,6 +223,7 @@ public class TestGridService {
         }
         // 与模拟目标Grid相切的Grid
         Grid grid = new Grid();
+        grid.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
         grid.addAnchorPointVector(20, 20);
         grid.addAnchorPointVector(20, 30);
         grid.addAnchorPointVector(30, 30);
@@ -189,6 +232,7 @@ public class TestGridService {
 
         // 模拟目标Grid，一定存在
         Grid targetGrid = new Grid();
+        targetGrid.setGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
         targetGrid.addAnchorPointVector(10, 10);
         targetGrid.addAnchorPointVector(10, 20);
         targetGrid.addAnchorPointVector(20, 20);

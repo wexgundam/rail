@@ -7,8 +7,10 @@ package com.critc.rail.modal;
 
 import com.critc.network.modal.Grid;
 
+import java.util.Date;
+
 /**
- * what:    车站. <br/>
+ * what:    调度视角的车站. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -21,6 +23,10 @@ public class Station implements IRailNetworkElement {
      */
     private int id;
     /**
+     * 网格空间几何类型，默认是点类型，可调整为多边形类型
+     */
+    private int gridGeometryType = Grid.GEOMETRY_TYPE_POINT;
+    /**
      * 基点坐标的字符串表示，表示方式：x@y，"@"为分隔符
      */
     private String basePointString;
@@ -32,6 +38,66 @@ public class Station implements IRailNetworkElement {
      * 对应的网格
      */
     private Grid grid;
+    /**
+     * 名称
+     */
+    private String name;
+    /**
+     * 管辖局Id
+     */
+    private int jurisdictionBureauId;
+    /**
+     * 管辖局名称
+     */
+    private String jurisdictionBureauName;
+    /**
+     * 管辖行车调度台id
+     */
+    private int jurisdictionTrainlineDeportId;
+    /**
+     * 管辖行车调度台名称
+     */
+    private String jurisdictionTrainlineDeportName;
+    /**
+     * 是否为路局分界口
+     */
+    private boolean bureauPartingStation;
+    /**
+     * 名称全拼音吗
+     */
+    private String namePinyin;
+    /**
+     * 名称首字母拼音吗
+     */
+    private String nameInitialPinyin;
+    /**
+     * 电报码
+     */
+    private String telegraphCode;
+    /**
+     * 创建人Id，只在保存新增数据时填写，以后不可更改
+     */
+    private int creatorId;//创建人Id
+    /**
+     * 创建人实名，只在保存新增数据时填写，以后不可更改
+     */
+    private String creatorRealName;//创建人Name
+    /**
+     * 创建时间，只在保存新增数据时填写，以后不可更改
+     */
+    private Date createdAt;//创建时间
+    /**
+     * 最后修改人Id，在新增和更新数据时填写，修改后保存时可更改
+     */
+    private int lastEditorId;//最后修改人Id
+    /**
+     * 最后修改人实名，在新增和更新数据时填写，修改后保存时可更改
+     */
+    private String lastEditorRealName;//最后修改人实名
+    /**
+     * 最后修改时间，在新增和更新数据时填写，修改后保存时可更改
+     */
+    private Date lastEditedAt;//最后修改时间
 
     @Override
     public boolean equals(Object o) {
@@ -46,6 +112,32 @@ public class Station implements IRailNetworkElement {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "id=" + id +
+                ", gridGeometryType=" + gridGeometryType +
+                ", basePointString='" + basePointString + '\'' +
+                ", anchorPointsString='" + anchorPointsString + '\'' +
+                ", grid=" + grid +
+                ", name='" + name + '\'' +
+                ", jurisdictionBureauId=" + jurisdictionBureauId +
+                ", jurisdictionBureauName='" + jurisdictionBureauName + '\'' +
+                ", jurisdictionTrainlineDeportId=" + jurisdictionTrainlineDeportId +
+                ", jurisdictionTrainlineDeportName='" + jurisdictionTrainlineDeportName + '\'' +
+                ", bureauPartingStation=" + bureauPartingStation +
+                ", namePinyin='" + namePinyin + '\'' +
+                ", nameInitialPinyin='" + nameInitialPinyin + '\'' +
+                ", telegraphCode='" + telegraphCode + '\'' +
+                ", creatorId=" + creatorId +
+                ", creatorRealName='" + creatorRealName + '\'' +
+                ", createdAt=" + createdAt +
+                ", lastEditorId=" + lastEditorId +
+                ", lastEditorRealName='" + lastEditorRealName + '\'' +
+                ", lastEditedAt=" + lastEditedAt +
+                '}';
     }
 
     public int getId() {
@@ -78,5 +170,135 @@ public class Station implements IRailNetworkElement {
 
     public void setAnchorPointsString(String anchorPointsString) {
         this.anchorPointsString = anchorPointsString;
+    }
+
+    public int getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public String getCreatorRealName() {
+        return creatorRealName;
+    }
+
+    public void setCreatorRealName(String creatorRealName) {
+        this.creatorRealName = creatorRealName;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getLastEditorId() {
+        return lastEditorId;
+    }
+
+    public void setLastEditorId(int lastEditorId) {
+        this.lastEditorId = lastEditorId;
+    }
+
+    public String getLastEditorRealName() {
+        return lastEditorRealName;
+    }
+
+    public void setLastEditorRealName(String lastEditorRealName) {
+        this.lastEditorRealName = lastEditorRealName;
+    }
+
+    public Date getLastEditedAt() {
+        return lastEditedAt;
+    }
+
+    public void setLastEditedAt(Date lastEditedAt) {
+        this.lastEditedAt = lastEditedAt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getJurisdictionBureauId() {
+        return jurisdictionBureauId;
+    }
+
+    public void setJurisdictionBureauId(int jurisdictionBureauId) {
+        this.jurisdictionBureauId = jurisdictionBureauId;
+    }
+
+    public String getJurisdictionBureauName() {
+        return jurisdictionBureauName;
+    }
+
+    public void setJurisdictionBureauName(String jurisdictionBureauName) {
+        this.jurisdictionBureauName = jurisdictionBureauName;
+    }
+
+    public int getJurisdictionTrainlineDeportId() {
+        return jurisdictionTrainlineDeportId;
+    }
+
+    public void setJurisdictionTrainlineDeportId(int jurisdictionTrainlineDeportId) {
+        this.jurisdictionTrainlineDeportId = jurisdictionTrainlineDeportId;
+    }
+
+    public String getJurisdictionTrainlineDeportName() {
+        return jurisdictionTrainlineDeportName;
+    }
+
+    public void setJurisdictionTrainlineDeportName(String jurisdictionTrainlineDeportName) {
+        this.jurisdictionTrainlineDeportName = jurisdictionTrainlineDeportName;
+    }
+
+    public boolean isBureauPartingStation() {
+        return bureauPartingStation;
+    }
+
+    public void setBureauPartingStation(boolean bureauPartingStation) {
+        this.bureauPartingStation = bureauPartingStation;
+    }
+
+    public String getNamePinyin() {
+        return namePinyin;
+    }
+
+    public void setNamePinyin(String namePinyin) {
+        this.namePinyin = namePinyin;
+    }
+
+    public String getNameInitialPinyin() {
+        return nameInitialPinyin;
+    }
+
+    public void setNameInitialPinyin(String nameInitialPinyin) {
+        this.nameInitialPinyin = nameInitialPinyin;
+    }
+
+    public String getTelegraphCode() {
+        return telegraphCode;
+    }
+
+    public void setTelegraphCode(String telegraphCode) {
+        this.telegraphCode = telegraphCode;
+    }
+
+    @Override
+    public int getGridGeometryType() {
+        return gridGeometryType;
+    }
+
+    @Override
+    public void setGridGeometryType(int gridGeometryType) {
+        this.gridGeometryType = gridGeometryType;
     }
 }
