@@ -392,9 +392,11 @@ public class StationService {
                 if (station != null) {
                     if (stationA == null) {
                         stationA = station;
+                        continue;
                     }
                     if (stationB == null) {
                         stationB = station;
+                        break;
                     }
                 }
             } catch (InterruptedException e) {
@@ -417,7 +419,7 @@ public class StationService {
             AdjoinStations adjoinStations = new AdjoinStations();
             adjoinStations.setLink(link);
             adjoinStations.setStationA(stationA);
-            adjoinStations.setStationA(stationB);
+            adjoinStations.setStationB(stationB);
             return adjoinStations;
         }
     }
@@ -433,11 +435,14 @@ public class StationService {
     public void setJurisdiction(Station station) {
         //获取管辖局
         Bureau jurisdictionBureau = bureauService.getJurisdiction(station);
+        if (jurisdictionBureau != null) {
+            station.setJurisdictionBureauId(jurisdictionBureau.getId());
+        }
         //获取行车调度台
         TrainlineDeport trainlineDeport = trainlineDeportService.getJurisdiction(station);
-
-        station.setJurisdictionBureauId(jurisdictionBureau.getId());
-        station.setJurisdictionTdId(trainlineDeport.getId());
+        if (trainlineDeport != null) {
+            station.setJurisdictionTdId(trainlineDeport.getId());
+        }
     }
 
     /**
@@ -449,7 +454,8 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public void addOne(Station station) {
-        stationDao.addOne(station);
+        int id = stationDao.addOne(station);
+        station.setId(id);
     }
 
     /**

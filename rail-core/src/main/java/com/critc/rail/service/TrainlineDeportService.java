@@ -11,6 +11,7 @@ import com.critc.rail.modal.TrainlineDeport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -36,6 +37,8 @@ import java.util.Vector;
 public class TrainlineDeportService {
     @Autowired
     private RailNetworkElementService railNetworkElementService;
+
+    List<TrainlineDeport> trainlineDeports = new ArrayList<>();
 
     /**
      * what:    检测给定行车调度台是否管辖给定车站. <br/>
@@ -113,7 +116,7 @@ public class TrainlineDeportService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<TrainlineDeport> getAll() {
-        throw new UnsupportedOperationException();
+        return trainlineDeports;
     }
 
     /**

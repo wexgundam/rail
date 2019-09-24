@@ -40,6 +40,9 @@ public class BureauService {
     @Autowired
     private RailNetworkElementService railNetworkElementService;
 
+    //测试用
+    private List<Bureau> bureaus = new ArrayList<>();
+
     /**
      * what:    检测两个路局是否邻接. <br/>
      * 通过GridService判断网格间关系. <br/>
@@ -125,8 +128,8 @@ public class BureauService {
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void add(Bureau bureau) {
-        throw new UnsupportedOperationException();
+    public void addOne(Bureau bureau) {
+        bureaus.add(bureau);
     }
 
     /**
@@ -176,7 +179,12 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public Bureau getOne(BureauSearchVo bureauSearchVo) {
-        throw new UnsupportedOperationException();
+        for (Bureau bureau : bureaus) {
+            if (bureau.getId() == bureauSearchVo.getIdEqual()) {
+                return bureau;
+            }
+        }
+        return null;
     }
 
     /**
@@ -188,6 +196,6 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<Bureau> getAll() {
-        throw new UnsupportedOperationException();
+        return bureaus;
     }
 }

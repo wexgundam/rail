@@ -77,7 +77,7 @@ public class Grid {
                 ", geometryType=" + geometryType +
                 ", basePointVector=" + basePointVector +
                 ", anchorPointVectors=" + anchorPointVectors +
-                ", original=" + original +
+                ", original=" + original.getClass().getSimpleName() +
                 '}';
     }
 
