@@ -17,7 +17,7 @@ public class StationSearchVo {
     /**
      * id等于
      */
-    private int idEqual;
+    private Integer idEqual;
     /**
      * 全称等于
      */
@@ -29,15 +29,19 @@ public class StationSearchVo {
     /**
      * 管辖局Id等于
      */
-    private int jurisdictionBureauIdEqual;
+    private Integer jurisdictionBureauIdEqual;
     /**
      * 管辖行车调度台Id等于
      */
-    private int jurisdictionTrainlineDeportIdEqual;
+    private Integer jurisdictionTdIdEqual;
     /**
      * 电报码等于
      */
     private String telegraphCodeEqual;
+    /**
+     * 电报码like
+     */
+    private String telegraphCodeLike;
     /**
      * 拼音码like
      */
@@ -45,11 +49,12 @@ public class StationSearchVo {
     /**
      * 是否为路局分界口
      */
-    private boolean bureauPartingStation;
+    private Boolean bureauPartingEqual;
 
     public String getNameEqual() {
         return nameEqual;
     }
+
 
     public void setNameEqual(String nameEqual) {
         this.nameEqual = nameEqual;
@@ -63,28 +68,28 @@ public class StationSearchVo {
         this.nameLike = nameLike;
     }
 
-    public int getJurisdictionBureauIdEqual() {
+    public Integer getJurisdictionBureauIdEqual() {
         return jurisdictionBureauIdEqual;
     }
 
-    public void setJurisdictionBureauIdEqual(int jurisdictionBureauIdEqual) {
+    public void setJurisdictionBureauIdEqual(Integer jurisdictionBureauIdEqual) {
         this.jurisdictionBureauIdEqual = jurisdictionBureauIdEqual;
     }
 
-    public int getJurisdictionTrainlineDeportIdEqual() {
-        return jurisdictionTrainlineDeportIdEqual;
+    public Integer getJurisdictionTdIdEqual() {
+        return jurisdictionTdIdEqual;
     }
 
-    public void setJurisdictionTrainlineDeportIdEqual(int jurisdictionTrainlineDeportIdEqual) {
-        this.jurisdictionTrainlineDeportIdEqual = jurisdictionTrainlineDeportIdEqual;
+    public void setJurisdictionTdIdEqual(Integer jurisdictionTdIdEqual) {
+        this.jurisdictionTdIdEqual = jurisdictionTdIdEqual;
     }
 
-    public String getTelegraphCodeEqual() {
-        return telegraphCodeEqual;
+    public String getTelegraphCodeLike() {
+        return telegraphCodeLike;
     }
 
-    public void setTelegraphCodeEqual(String telegraphCodeEqual) {
-        this.telegraphCodeEqual = telegraphCodeEqual;
+    public void setTelegraphCodeLike(String telegraphCodeLike) {
+        this.telegraphCodeLike = telegraphCodeLike;
     }
 
     public String getPinyinLike() {
@@ -95,19 +100,27 @@ public class StationSearchVo {
         this.pinyinLike = pinyinLike;
     }
 
-    public int getIdEqual() {
+    public Integer getIdEqual() {
         return idEqual;
     }
 
-    public void setIdEqual(int idEqual) {
+    public void setIdEqual(Integer idEqual) {
         this.idEqual = idEqual;
     }
 
-    public boolean isBureauPartingStation() {
-        return bureauPartingStation;
+    public Boolean getBureauPartingEqual() {
+        return bureauPartingEqual;
     }
 
-    public void setBureauPartingStation(boolean bureauPartingStation) {
-        this.bureauPartingStation = bureauPartingStation;
+    public void setBureauPartingEqual(Boolean bureauPartingEqual) {
+        this.bureauPartingEqual = bureauPartingEqual;
+    }
+
+    public String getTelegraphCodeEqual() {
+        return telegraphCodeEqual;
+    }
+
+    public void setTelegraphCodeEqual(String telegraphCodeEqual) {
+        this.telegraphCodeEqual = telegraphCodeEqual;
     }
 }

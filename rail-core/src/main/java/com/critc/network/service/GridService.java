@@ -262,12 +262,14 @@ public class GridService {
                 }
             } catch (InterruptedException e) {
                 // 异常日志
-                logger.error("GridService.getGridContainsTargetGrid()任务类: " + gridServiceTaskFactory.getClass().getSimpleName());
-                logger.error("GridService.getGridContainsTargetGrid()异常信息: " + e.getMessage());
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: executorService");
+                logger.error("异常信息: " + e.getMessage());
             } catch (ExecutionException e) {
                 // 异常日志
-                logger.error("GridService.getGridContainsTargetGrid()任务类: " + gridServiceTaskFactory.getClass().getSimpleName());
-                logger.error("GridService.getGridContainsTargetGrid()异常信息: " + e.getMessage());
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: executorService");
+                logger.error("异常信息: " + e.getMessage());
             }
         }
 

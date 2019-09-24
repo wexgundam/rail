@@ -33,6 +33,7 @@ import java.util.concurrent.FutureTask;
  */
 @Repository
 public class LinkDao extends BaseDao<Link, StationSearchVo> {
+    //临时测试用
     private List<Link> links = new ArrayList<>();
 
     /**

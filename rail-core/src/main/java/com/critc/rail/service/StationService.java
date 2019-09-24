@@ -5,8 +5,10 @@
  */
 package com.critc.rail.service;
 
+import com.critc.rail.dao.StationDao;
 import com.critc.rail.modal.AdjoinStations;
 import com.critc.rail.modal.Bureau;
+import com.critc.rail.modal.BureauPartingStation;
 import com.critc.rail.modal.Link;
 import com.critc.rail.modal.Station;
 import com.critc.rail.modal.TrainlineDeport;
@@ -19,7 +21,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 /**
  * what:    调度视角的车站服务. <br/>
@@ -30,7 +36,6 @@ import java.util.Vector;
  * # 按条件查询一个车站. <br/>
  * # 获取全路车站. <br/>
  * # 获取全路的路局分界口车站. <br/>
- * # 获取两个路局的邻接车站. <br/>
  * # 获取两个路局的路局分界口车站. <br/>
  * # 获取给定路局所辖车站. <br/>
  * # 获取给定路局所辖路局分界口车站. <br/>
@@ -68,6 +73,11 @@ public class StationService {
      */
     @Autowired
     private TrainlineDeportService trainlineDeportService;
+    /**
+     * 车站数据获取对象
+     */
+    @Autowired
+    private StationDao stationDao;
     /**
      * 节点间服务
      */
@@ -122,7 +132,7 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<Station> getMany(StationSearchVo stationSearchVo) {
-        throw new UnsupportedOperationException();
+        return stationDao.getMany(stationSearchVo);
     }
 
     /**
@@ -134,7 +144,7 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public Station getOne(StationSearchVo stationSearchVo) {
-        throw new UnsupportedOperationException();
+        return stationDao.getOne(stationSearchVo);
     }
 
     /**
@@ -166,87 +176,85 @@ public class StationService {
 
     /**
      * what:    获取全路的路局分界口车站. <br/>
-     * 返回值为List，元素为Vector. <br/>
-     * Vector[0]为管辖局. <br/>
-     * Vector[1]为邻接局. <br/>
-     * Vector[2]为分界口车站. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Vector<Object>> getBureauPartings() {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setBureauPartingStation(true);
-//        getList(stationSearchVo);
+    public List<BureauPartingStation> getBureauPartingStations() {
+        List<BureauPartingStation> bureauPartingStations = new ArrayList<>();
 
-        throw new UnsupportedOperationException();
-//        return ;
-    }
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<List<BureauPartingStation>>> futureTasks = new ArrayList<>();
 
-    /**
-     * what:    获取两个路局邻接车站. <br/>
-     * 返回值为为Vector. <br/>
-     * Vector[0]为bureauA管辖的车站集合. <br/>
-     * Vector[1]为bureauB管辖的车站集合. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public Vector<List<Station>> getAdjoins(Bureau bureauA, Bureau bureauB) {
-        // 获取bureauA管辖的车站
-        List<Station> bureaAStations = this.getMany(bureauA);
-        // 获取bureauB管辖的车站
-        List<Station> bureaBStations = this.getMany(bureauB);
+        for (Bureau bureau : bureauService.getAll()) {
+            // 声明任务
+            Callable<List<BureauPartingStation>> callable = () -> {
+                //查询给定路局的分界口
+                return getBureauPartingStations(bureau);
+            };
+            // 创建FutureTask
+            FutureTask<List<BureauPartingStation>> futureTask = new FutureTask<>(callable);
+            // 添加到任务集合
+            futureTasks.add(futureTask);
+            // 将任务提交到线程池
+            executorService.submit(futureTask);
+        }
 
-        // bureauA车站与BureauB邻接
-        // bureauB车站与BureauA邻接
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
 
-        throw new UnsupportedOperationException();
+        // 返回结果
+        for (FutureTask<List<BureauPartingStation>> task : futureTasks) {
+            try {
+                bureauPartingStations.addAll(task.get());
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getBureauPartingStations");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getBureauPartingStations");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+
+        return bureauPartingStations;
+
     }
 
     /**
      * what:    获取两个路局的路局分界口车站. <br/>
-     * 返回值为List，元素为Vector. <br/>
-     * Vector[0]为管辖局. <br/>
-     * Vector[1]为邻接局. <br/>
-     * Vector[2]为分界口车站. <br/>
+     * 即获取两个路局的邻接车站. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Vector<Object>> getBureauPartings(Bureau bureauA, Bureau bureauB) {
-        // 两局分界口集合
-        List<Vector<Object>> vectors = new ArrayList<>();
-        // 获得两局邻接车站集合
-        Vector<List<Station>> adjoinStations = getAdjoins(bureauA, bureauB);
-        // 遍历bureauA管辖的车站
-        // 如果车站为分界口，加入到集合中
-        for (Station station : adjoinStations.get(0)) {
-            if (station.isBureauParting()) {
-                Vector<Object> vector = new Vector<>(3);
-                vector.set(0, bureauA);
-                vector.set(1, bureauB);
-                vector.set(2, station);
+    public List<BureauPartingStation> getBureauPartingStations(Bureau bureauA, Bureau bureauB) {
+        List<BureauPartingStation> bureauPartingStations = new ArrayList<>();
+        //遍历bureauA管辖的分界口
+        for (BureauPartingStation bureauPartingStation : getBureauPartingStations(bureauA)) {
+            //如果邻接局为bureauB，则添加到集合中
+            if (bureauPartingStation.getAdjoinBureau().equals(bureauB)) {
+                bureauPartingStations.add(bureauPartingStation);
             }
         }
-        // 遍历bureauB管辖的车站
-        // 如果车站为分界口，加入到集合中
-        for (Station station : adjoinStations.get(1)) {
-            if (station.isBureauParting()) {
-                Vector<Object> vector = new Vector<>(3);
-                vector.set(0, bureauB);
-                vector.set(1, bureauA);
-                vector.set(2, station);
+        //遍历bureauB管辖的分界口
+        for (BureauPartingStation bureauPartingStation : getBureauPartingStations(bureauB)) {
+            //如果邻接局为bureauA，则添加到集合中
+            if (bureauPartingStation.getAdjoinBureau().equals(bureauA)) {
+                bureauPartingStations.add(bureauPartingStation);
             }
         }
 
-        return vectors;
+        return bureauPartingStations;
     }
 
     /**
@@ -265,24 +273,40 @@ public class StationService {
 
     /**
      * what:    获取给定路局管辖的路局分界口车站. <br/>
-     * 返回值为List，元素为Vector. <br/>
-     * Vector[0]为管辖局. <br/>
-     * Vector[1]为邻接局. <br/>
-     * Vector[2]为分界口车站. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Vector<Object>> getBureauPartings(Bureau bureau) {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setBureauPartingStation(true);
-        stationSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
-        List<Station> stations = getMany(stationSearchVo);
+    public List<BureauPartingStation> getBureauPartingStations(Bureau bureau) {
+        List<BureauPartingStation> bureauPartingStations = new ArrayList<>();
 
-        throw new UnsupportedOperationException();
-//        return ;
+        // 查询Bureau管辖的分界口
+        StationSearchVo stationSearchVo = new StationSearchVo();
+        stationSearchVo.setBureauPartingEqual(true);
+        stationSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
+
+        //遍历分界口车站
+        for (Station station : stationDao.getMany(stationSearchVo)) {
+            // 获取管辖局
+            Bureau jurisdictionBureau = bureauService.getOne(station.getJurisdictionBureauId());
+            // 获取邻接车站
+            for (AdjoinStations adjoinStations : getAdjoinStationses(station)) {
+                Bureau adjoinBureau = bureauService.getOne(adjoinStations.getStationB().getJurisdictionBureauId());
+                //如果分界口与邻接站管辖局不一致，则记录邻接局信息
+                if (!jurisdictionBureau.equals(adjoinBureau)) {
+                    BureauPartingStation bureauPartingStation = new BureauPartingStation();
+                    bureauPartingStation.setBureauPartingStation(station);
+                    bureauPartingStation.setJurisdictionBureau(jurisdictionBureau);
+                    bureauPartingStation.setAdjoinLink(adjoinStations.getLink());
+                    bureauPartingStation.setAdjoinBureau(adjoinBureau);
+                    bureauPartingStation.setAdjoinStation(adjoinStations.getStationB());
+                    bureauPartingStations.add(bureauPartingStation);
+                }
+            }
+        }
+        return bureauPartingStations;
     }
 
     /**
@@ -295,23 +319,34 @@ public class StationService {
      */
     public List<Station> getMany(TrainlineDeport trainlineDeport) {
         StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setJurisdictionTrainlineDeportIdEqual(trainlineDeport.getId());
+        stationSearchVo.setJurisdictionTdIdEqual(trainlineDeport.getId());
         return getMany(stationSearchVo);
     }
 
     /**
      * what:    获得给定车站的邻接车站. <br/>
-     * 通过gridService实现. <br/>
+     * 根据与给定车站邻接的节点间，查询邻接车站. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<AdjoinStations> getAdjoins(Station station) {
-        List<Station> stations;
-        List<Link> links;
-        throw new UnsupportedOperationException();
+    public List<AdjoinStations> getAdjoinStationses(Station station) {
+        //邻接车站集合
+        List<AdjoinStations> adjoinStationses = new ArrayList<>();
+        //获得给定车站邻接的节点间
+        for (Link link : linkService.getAdjoins(station)) {
+            AdjoinStations adjoinStations = getAdjoinStations(link);
+            //调换stationA和stationB的位置，使得stationA为给定的station
+            if (!adjoinStations.getStationA().equals(station)) {
+                adjoinStations.setStationB(adjoinStations.getStationA());
+                adjoinStations.setStationA(station);
+            }
+            adjoinStationses.add(adjoinStations);
+        }
+
+        return adjoinStationses;
     }
 
     /**
@@ -323,9 +358,68 @@ public class StationService {
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public AdjoinStations getAdjoins(Link link) {
-        List<Station> stations;
-        throw new UnsupportedOperationException();
+    public AdjoinStations getAdjoinStations(Link link) {
+
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<Station>> futureTasks = new ArrayList<>();
+
+        for (Station station : getAll()) {
+            // 声明任务
+            Callable<Station> callable = () -> {
+                //查询给定路局的分界口
+                return adjoin(station, link) ? station : null;
+            };
+            // 创建FutureTask
+            FutureTask<Station> futureTask = new FutureTask<>(callable);
+            // 添加到任务集合
+            futureTasks.add(futureTask);
+            // 将任务提交到线程池
+            executorService.submit(futureTask);
+        }
+
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
+
+        // 返回结果
+        //节点间邻接的车站A与车站B
+        Station stationA = null;
+        Station stationB = null;
+        for (FutureTask<Station> task : futureTasks) {
+            try {
+                Station station = task.get();
+                if (station != null) {
+                    if (stationA == null) {
+                        stationA = station;
+                    }
+                    if (stationB == null) {
+                        stationB = station;
+                    }
+                }
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getBureauPartingStations");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getBureauPartingStations");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+
+        // 没有邻接车站时返回null
+        if (stationA == null && stationB == null) {
+            return null;
+        } else {
+            AdjoinStations adjoinStations = new AdjoinStations();
+            adjoinStations.setLink(link);
+            adjoinStations.setStationA(stationA);
+            adjoinStations.setStationA(stationB);
+            return adjoinStations;
+        }
     }
 
     /**
@@ -337,9 +431,13 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public void setJurisdiction(Station station) {
-        List<Bureau> bureaus;
-        List<TrainlineDeport> trainlineDeports;
-        throw new UnsupportedOperationException();
+        //获取管辖局
+        Bureau jurisdictionBureau = bureauService.getJurisdiction(station);
+        //获取行车调度台
+        TrainlineDeport trainlineDeport = trainlineDeportService.getJurisdiction(station);
+
+        station.setJurisdictionBureauId(jurisdictionBureau.getId());
+        station.setJurisdictionTdId(trainlineDeport.getId());
     }
 
     /**
@@ -351,7 +449,7 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public void addOne(Station station) {
-        throw new UnsupportedOperationException();
+        stationDao.addOne(station);
     }
 
     /**
@@ -363,7 +461,7 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public void updateOne(Station station) {
-        throw new UnsupportedOperationException();
+        stationDao.updateOne(station);
     }
 
     /**
@@ -375,6 +473,6 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public void deleteOne(Station station) {
-        throw new UnsupportedOperationException();
+        stationDao.deleteOne(station);
     }
 }

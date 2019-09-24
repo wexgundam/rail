@@ -6,6 +6,7 @@
 package com.critc.rail.service;
 
 import com.critc.rail.modal.Bureau;
+import com.critc.rail.modal.Station;
 import com.critc.rail.modal.TrainlineDeport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,12 @@ import java.util.Vector;
 
 /**
  * what:    调度视角的行车调度台服务. <br/>
+ * # 检测给定行车调度台是否管辖给定车站. <br/>
+ * # 获取所有行车调度台. <br/>
  * # 获取两个路局邻接行车调度台. <br/>
  * # 获取给定路局所辖行车调度台. <br/>
  * # 设置给定行调台的管辖局. <br/>
+ * # 获取给定路局所辖行车调度台. <br/>
  * # 新增x. <br/>
  * # 更新行车调度台. <br/>
  * # 删除行车调度台. <br/>
@@ -32,6 +36,20 @@ import java.util.Vector;
 public class TrainlineDeportService {
     @Autowired
     private RailNetworkElementService railNetworkElementService;
+
+    /**
+     * what:    检测给定行车调度台是否管辖给定车站. <br/>
+     * 通过GridService判断网格间关系. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public boolean jurisdiction(TrainlineDeport trainlineDeport, Station station) {
+        return railNetworkElementService.jurisdiction(trainlineDeport, station);
+    }
+
 
     /**
      * what:    获取两个路局邻接行车调度台. <br/>
@@ -84,5 +102,34 @@ public class TrainlineDeportService {
                 }
             }
         }
+    }
+
+    /**
+     * what:    查询所有行车调度台. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public List<TrainlineDeport> getAll() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * what:    获取给定车站的管辖行车调度台. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public TrainlineDeport getJurisdiction(Station station) {
+        for (TrainlineDeport trainlineDeport : getAll()) {
+            if (jurisdiction(trainlineDeport, station)) {
+                return trainlineDeport;
+            }
+        }
+        return null;
     }
 }

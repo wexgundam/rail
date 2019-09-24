@@ -51,9 +51,9 @@ public class Station implements IRailNetworkElement {
      */
     private String jurisdictionBureauName;
     /**
-     * 管辖行车调度台id
+     * 管辖行车调度台id Trainline Deport
      */
-    private int jurisdictionTrainlineDeportId;
+    private int jurisdictionTdId;
     /**
      * 管辖行车调度台名称
      */
@@ -125,7 +125,7 @@ public class Station implements IRailNetworkElement {
                 ", name='" + name + '\'' +
                 ", jurisdictionBureauId=" + jurisdictionBureauId +
                 ", jurisdictionBureauName='" + jurisdictionBureauName + '\'' +
-                ", jurisdictionTrainlineDeportId=" + jurisdictionTrainlineDeportId +
+                ", jurisdictionTdId=" + jurisdictionTdId +
                 ", jurisdictionTrainlineDeportName='" + jurisdictionTrainlineDeportName + '\'' +
                 ", bureauParting=" + bureauParting +
                 ", namePinyin='" + namePinyin + '\'' +
@@ -244,12 +244,12 @@ public class Station implements IRailNetworkElement {
         this.jurisdictionBureauName = jurisdictionBureauName;
     }
 
-    public int getJurisdictionTrainlineDeportId() {
-        return jurisdictionTrainlineDeportId;
+    public int getJurisdictionTdId() {
+        return jurisdictionTdId;
     }
 
-    public void setJurisdictionTrainlineDeportId(int jurisdictionTrainlineDeportId) {
-        this.jurisdictionTrainlineDeportId = jurisdictionTrainlineDeportId;
+    public void setJurisdictionTdId(int jurisdictionTdId) {
+        this.jurisdictionTdId = jurisdictionTdId;
     }
 
     public String getJurisdictionTrainlineDeportName() {

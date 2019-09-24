@@ -21,6 +21,7 @@ import java.util.List;
  * # 检测给定路局是否管辖给定行车调度台. <br/>
  * # 检测给定路局是否管辖给定车站. <br/>
  * # 获取给定路局的邻接路局. <br/>
+ * # 获取给定车站的管辖局. <br/>
  * # 新增路局. <br/>
  * # 更新路局. <br/>
  * # 删除路局. <br/>
@@ -100,6 +101,23 @@ public class BureauService {
     }
 
     /**
+     * what:    获取给定车站的管辖局. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public Bureau getJurisdiction(Station station) {
+        for (Bureau bureau : getAll()) {
+            if (jurisdiction(bureau, station)) {
+                return bureau;
+            }
+        }
+        return null;
+    }
+
+    /**
      * what:    新增路局. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
@@ -143,10 +161,10 @@ public class BureauService {
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public Bureau get(int id) {
+    public Bureau getOne(int id) {
         BureauSearchVo bureauSearchVo = new BureauSearchVo();
         bureauSearchVo.setIdEqual(id);
-        return get(bureauSearchVo);
+        return getOne(bureauSearchVo);
     }
 
     /**
@@ -157,7 +175,7 @@ public class BureauService {
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public Bureau get(BureauSearchVo bureauSearchVo) {
+    public Bureau getOne(BureauSearchVo bureauSearchVo) {
         throw new UnsupportedOperationException();
     }
 

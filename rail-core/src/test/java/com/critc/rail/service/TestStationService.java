@@ -129,4 +129,57 @@ public class TestStationService {
         Assert.assertTrue(stationService.adjoin(stationD, link));
         Assert.assertFalse(stationService.adjoin(stationE, link));
     }
+
+    @Test
+    public void testGetMany() {
+        Assert.fail("getMany(StationSearchVo stationSearchVo)待实现");
+        Assert.fail("getMany(Bureau bureau)待实现");
+    }
+
+    @Test
+    public void testGetOne() {
+        Assert.fail("getOne(StationSearchVo stationSearchVo)待实现");
+        Assert.fail("getOne(int id)待实现");
+    }
+
+    @Test
+    public void testGetAll() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testGetBureauPartingStations() {
+        Assert.fail("getBureauPartingStations()待实现");
+        Assert.fail("getBureauPartingStations(Bureau bureauA, Bureau bureauB)待实现");
+    }
+
+    @Test
+    public void testGetAdjoinStationses() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testGetAdjoinStations() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testSetJurisdiction() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testAddOne() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testUpdateOne() {
+        Assert.fail("待实现");
+    }
+
+    @Test
+    public void testDeleteOne() {
+        Assert.fail("待实现");
+    }
 }
