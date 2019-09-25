@@ -153,7 +153,7 @@ public class BureauService {
      * @author 靳磊 created on 2019/9/11
      */
     public void delete(Bureau bureau) {
-        throw new UnsupportedOperationException();
+        bureaus.remove(bureau);
     }
 
     /**

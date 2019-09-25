@@ -7,16 +7,17 @@ package com.critc.rail.dao;
 
 import com.critc.core.dao.BaseDao;
 import com.critc.rail.modal.Bureau;
-import com.critc.rail.modal.Station;
 import com.critc.rail.modal.TrainlineDeport;
-import com.critc.rail.vo.StationSearchVo;
+import com.critc.rail.modal.TrainlineDeport;
+import com.critc.rail.vo.TrainlineDeportSearchVo;
+import com.critc.rail.vo.TrainlineDeportSearchVo;
 import com.critc.util.string.StringUtil;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
- * what:    车站数据获取对象. <br/>
+ * what:    行车调度台数据获取对象. <br/>
  * when:    (这里描述这个类的适用时机 – 可选).<br/>
  * how:     (这里描述这个类的使用方法 – 可选).<br/>
  * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -24,16 +25,16 @@ import java.util.List;
  * @author 靳磊 created on 2019/9/16
  */
 @Repository
-public class StationDao extends BaseDao<Station, StationSearchVo> {
+public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeportSearchVo> {
     /**
-     * what:    根据查询条件查询一组车站. <br/>
+     * what:    根据查询条件查询一组行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Station> getMany(StationSearchVo stationSearchVo) {
+    public List<TrainlineDeport> getMany(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
         StringBuffer sql = new StringBuffer();
         sql.append("select ");
         sql.append(" ID,");
@@ -43,9 +44,6 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" NAME,");
         sql.append(" JURISDICTION_BUREAU_ID,");
 //        sql.append(" (select NAME from T_BUREAU where id=:jurisdictionBureauId),");
-        sql.append(" JURISDICTION_TD_ID,");
-//        sql.append(" (select NAME from T_TRAINLINE_DEPORT where id=:jurisdictionTdId),");
-        sql.append(" BUREAU_PARTING,");
         sql.append(" NAME_PINYIN,");
         sql.append(" NAME_INITIAL_PINYIN,");
         sql.append(" TELEGRAPH_CODE,");
@@ -56,23 +54,23 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" LAST_EDITOR_REAL_NAME,");
         sql.append(" LAST_EDITED_AT");
         sql.append(" from ");
-        sql.append("T_STATION");
+        sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where 1=1 ");
 
-        sql.append(createSearchSql(stationSearchVo));
-        return list(sql.substring(0), stationSearchVo);
+        sql.append(createSearchSql(TrainlineDeportSearchVo));
+        return list(sql.substring(0), TrainlineDeportSearchVo);
     }
 
     /**
-     * what:    根据查询条件查询一个车站. <br/>
+     * what:    根据查询条件查询一个行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public Station getOne(StationSearchVo stationSearchVo) {
-        List<Station> many = getMany(stationSearchVo);
+    public TrainlineDeport getOne(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
+        List<TrainlineDeport> many = getMany(TrainlineDeportSearchVo);
         if (many.size() > 0) {
             return many.get(0);
         } else {
@@ -81,78 +79,64 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
     }
 
     /**
-     * what:    根据id查询一个车站. <br/>
+     * what:    根据id查询一个行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public Station getOne(int id) {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setIdEqual(id);
-        return getOne(stationSearchVo);
+    public TrainlineDeport getOne(int id) {
+        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        TrainlineDeportSearchVo.setIdEqual(id);
+        return getOne(TrainlineDeportSearchVo);
     }
 
     /**
-     * what:    获取全路车站. <br/>
+     * what:    获取全路行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Station> getAll() {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        return getMany(stationSearchVo);
+    public List<TrainlineDeport> getAll() {
+        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        return getMany(TrainlineDeportSearchVo);
     }
 
     /**
-     * what:    获取给定路局管辖的车站. <br/>
+     * what:    获取给定路局管辖的行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<Station> getMany(Bureau bureau) {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
-        return getMany(stationSearchVo);
+    public List<TrainlineDeport> getMany(Bureau bureau) {
+        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        TrainlineDeportSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
+        return getMany(TrainlineDeportSearchVo);
     }
 
     /**
-     * what:    获取给定行车调度台管辖的车站. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public List<Station> getMany(TrainlineDeport trainlineDeport) {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setJurisdictionTdIdEqual(trainlineDeport.getId());
-        return getMany(stationSearchVo);
-    }
-
-    /**
-     * what:    按条件获取数量. <br/>
+     * what:    获取数量. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/25
      */
-    public int getCount(StationSearchVo stationSearchVo) {
+    public int getCount(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
         StringBuffer sql = new StringBuffer();
         sql.append("select ");
         sql.append(" count(ID) ");
         sql.append(" from ");
-        sql.append("T_STATION");
+        sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where 1=1 ");
 
-        sql.append(createSearchSql(stationSearchVo));
-        return count(sql.substring(0), stationSearchVo);
+        sql.append(createSearchSql(TrainlineDeportSearchVo));
+        return count(sql.substring(0), TrainlineDeportSearchVo);
     }
 
     /**
@@ -163,48 +147,42 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
      *
      * @author 靳磊 created on 2019/9/20
      */
-    private String createSearchSql(StationSearchVo stationSearchVo) {
+    private String createSearchSql(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
         String sql = "";
-        if (stationSearchVo.getIdEqual() != null) {
+        if (TrainlineDeportSearchVo.getIdEqual() != null) {
             sql += " and ID=:idEqual";
         }
-        if (stationSearchVo.getJurisdictionBureauIdEqual() != null) {
+        if (TrainlineDeportSearchVo.getJurisdictionBureauIdEqual() != null) {
             sql += " and JURISDICTION_BUREAU_ID=:jurisdictionBureauIdEqual";
         }
-        if (stationSearchVo.getJurisdictionTdIdEqual() != null) {
-            sql += " and JURISDICTION_TD_ID=:jurisdictionTdIdEqual";
-        }
-        if (!StringUtil.isNullOrEmpty(stationSearchVo.getNameEqual())) {
+        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getNameEqual())) {
             sql += " and NAME=:nameEqual";
         }
-        if (!StringUtil.isNullOrEmpty(stationSearchVo.getNameLike())) {
+        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getNameLike())) {
             sql += " and NAME like :nameLike";
         }
-        if (!StringUtil.isNullOrEmpty(stationSearchVo.getPinyinLike())) {
+        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getPinyinLike())) {
             sql += " and (NAME_PINYIN like :pinyinLike or NAME_INITIAL_PINYIN like :pinyinLike)";
         }
-        if (!StringUtil.isNullOrEmpty(stationSearchVo.getTelegraphCodeLike())) {
+        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getTelegraphCodeLike())) {
             sql += " and TELEGRAPH_CODE like :TelegraphCodeLike";
-        }
-        if (stationSearchVo.getBureauPartingEqual() != null) {
-            sql += " and BUREAU_PARTING=:bureauPartingEqual";
         }
 
         return sql;
     }
 
     /**
-     * what:    新增车站. <br/>
+     * what:    新增行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public int addOne(Station station) {
+    public int addOne(TrainlineDeport TrainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("insert into ");
-        sql.append("T_STATION");
+        sql.append("T_TRAINLINE_DEPORT");
         sql.append(" (");
         sql.append(" ID,");
         sql.append(" GRID_GEOMETRY_TYPE,");
@@ -212,8 +190,6 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" ANCHOR_POINTS_STRING,");
         sql.append(" NAME,");
         sql.append(" JURISDICTION_BUREAU_ID,");
-        sql.append(" JURISDICTION_TD_ID,");
-        sql.append(" BUREAU_PARTING,");
         sql.append(" NAME_PINYIN,");
         sql.append(" NAME_INITIAL_PINYIN,");
         sql.append(" TELEGRAPH_CODE,");
@@ -224,14 +200,12 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" LAST_EDITOR_REAL_NAME,");
         sql.append(" LAST_EDITED_AT");
         sql.append(") values (");
-        sql.append(" seq_t_station.nextval,");
+        sql.append(" seq_t_trainline_deport.nextval,");
         sql.append(" :gridGeometryType,");
         sql.append(" :basePointString,");
         sql.append(" :anchorPointsString,");
         sql.append(" :name,");
         sql.append(" :jurisdictionBureauId,");
-        sql.append(" :jurisdictionTdId,");
-        sql.append(" :bureauParting,");
         sql.append(" :namePinyin,");
         sql.append(" :nameInitialPinyin,");
         sql.append(" :telegraphCode,");
@@ -243,29 +217,27 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" sysdate");
         sql.append(")");
 
-        return insertForId(sql.substring(0), station, "id");
+        return insertForId(sql.substring(0), TrainlineDeport, "id");
     }
 
     /**
-     * what:    更新车站. <br/>
+     * what:    更新行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void updateOne(Station station) {
+    public void updateOne(TrainlineDeport TrainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("update ");
-        sql.append("T_STATION");
+        sql.append("T_TRAINLINE_DEPORT");
         sql.append(" set ");
         sql.append(" GRID_GEOMETRY_TYPE=:gridGeometryType, ");
         sql.append(" BASE_POINT_STRING=:basePointString, ");
         sql.append(" ANCHOR_POINTS_STRING=:anchorPointsString, ");
         sql.append(" NAME=:name, ");
         sql.append(" JURISDICTION_BUREAU_ID=:jurisdictionBureauId, ");
-        sql.append(" JURISDICTION_TD_ID=:jurisdictionTdId, ");
-        sql.append(" BUREAU_PARTING=:bureauParting, ");
         sql.append(" NAME_PINYIN=:namePinyin, ");
         sql.append(" NAME_INITIAL_PINYIN=:nameInitialPinyin, ");
         sql.append(" TELEGRAPH_CODE=:telegraphCode, ");
@@ -274,23 +246,23 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" LAST_EDITED_AT=sysdate ");
         sql.append(" where ID=:id");
 
-        update(sql.substring(0), station);
+        update(sql.substring(0), TrainlineDeport);
     }
 
     /**
-     * what:    删除车站. <br/>
+     * what:    删除行车调度台. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void deleteOne(Station station) {
+    public void deleteOne(TrainlineDeport TrainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("delete ");
-        sql.append("T_STATION");
+        sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where ID=:id");
 
-        delete(sql.substring(0), station.getId());
+        delete(sql.substring(0), TrainlineDeport.getId());
     }
 }

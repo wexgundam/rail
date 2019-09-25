@@ -52,7 +52,6 @@ public class TestStationDao {
         station.setTelegraphCode("tc");
         station.setCreatorId(2);
         station.setCreatorRealName("crn");
-        station.setBureauParting(true);
         station.setLastEditorId(3);
         station.setLastEditorRealName("lrn");
     }

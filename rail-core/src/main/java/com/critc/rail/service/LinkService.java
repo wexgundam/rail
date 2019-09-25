@@ -215,9 +215,7 @@ public class LinkService {
 
         for (Link link : getAll()) {
             // 声明任务
-            Callable<Link> callable = () -> {
-                return railNetworkElementService.adjoin(station, link) ? link : null;
-            };
+            Callable<Link> callable = () -> railNetworkElementService.adjoin(station, link) ? link : null;
             // 创建FutureTask
             FutureTask<Link> futureTask = new FutureTask<>(callable);
             // 添加到任务集合

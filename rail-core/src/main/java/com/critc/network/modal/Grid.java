@@ -72,12 +72,13 @@ public class Grid {
 
     @Override
     public String toString() {
+        String originalString = original == null ? "null" : original.getClass().getSimpleName();
         return "Grid{" +
                 "id=" + id +
                 ", geometryType=" + geometryType +
                 ", basePointVector=" + basePointVector +
                 ", anchorPointVectors=" + anchorPointVectors +
-                ", original=" + original.getClass().getSimpleName() +
+                ", original=" + originalString +
                 '}';
     }
 

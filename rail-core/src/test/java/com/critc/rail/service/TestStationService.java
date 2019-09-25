@@ -153,8 +153,6 @@ public class TestStationService {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testGetBureauPartingStations() {
         Bureau bureauA = new Bureau();
         bureauA.setId(1);
@@ -239,6 +237,14 @@ public class TestStationService {
         Assert.assertTrue(bureauPartingStations.get(0).getJurisdictionBureau().equals(bureauA));
         Assert.assertNotNull(bureauPartingStations.get(0).getAdjoinBureau());
         Assert.assertTrue(bureauPartingStations.get(0).getAdjoinBureau().equals(bureauB));
+
+        stationService.deleteOne(stationA);
+        stationService.deleteOne(stationB);
+        stationService.deleteOne(stationC);
+        stationService.deleteOne(stationD);
+
+        bureauService.delete(bureauA);
+        bureauService.delete(bureauB);
     }
 
 

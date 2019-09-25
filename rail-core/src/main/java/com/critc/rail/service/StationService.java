@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +124,9 @@ public class StationService {
      * @author 靳磊 created on 2019/9/16
      */
     public boolean adjoin(Station station, Link link) {
-        return railNetworkElementService.adjoin(station, link);
+//        synchronized (station) {
+            return railNetworkElementService.adjoin(station, link);
+//        }
     }
 
     /**
@@ -289,7 +294,7 @@ public class StationService {
         stationSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
 
         //遍历分界口车站
-        for (Station station : stationDao.getMany(stationSearchVo)) {
+        for (Station station : getMany(stationSearchVo)) {
             // 获取管辖局
             Bureau jurisdictionBureau = bureauService.getOne(station.getJurisdictionBureauId());
             // 获取邻接车站
