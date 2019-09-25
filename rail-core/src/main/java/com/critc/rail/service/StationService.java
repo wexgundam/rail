@@ -42,6 +42,7 @@ import java.util.concurrent.FutureTask;
  * # 获取给定行车调度台所辖车站. <br/>
  * # 获取给定车站的邻接车站. <br/>
  * # 获得给定节点间的邻接车站. <br/>
+ * # 获得数量. <br/>
  * # 设置给定车站的管辖信息. <br/>
  * # 新增车站. <br/>
  * # 更新车站. <br/>
@@ -422,6 +423,18 @@ public class StationService {
             adjoinStations.setStationB(stationB);
             return adjoinStations;
         }
+    }
+
+    /**
+     * what:    获取数量. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/25
+     */
+    public int getCount(StationSearchVo stationSearchVo) {
+        return stationDao.getCount(stationSearchVo);
     }
 
     /**

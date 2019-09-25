@@ -161,6 +161,15 @@ public class TestStationDao {
         getMany = stationDao.getMany(stationSearchVo);
         Assert.assertTrue(getMany.size() > 0);
 
+        stationSearchVo = new StationSearchVo();
+        Assert.assertEquals(1, stationDao.getCount(stationSearchVo));
+        stationSearchVo = new StationSearchVo();
+        stationSearchVo.setBureauPartingEqual(true);
+        Assert.assertEquals(1, stationDao.getCount(stationSearchVo));
+        stationSearchVo = new StationSearchVo();
+        stationSearchVo.setIdEqual(-1);
+        Assert.assertEquals(0, stationDao.getCount(stationSearchVo));
+
         Bureau bureau = new Bureau();
         bureau.setId(station.getJurisdictionBureauId());
         getMany = stationDao.getMany(bureau);

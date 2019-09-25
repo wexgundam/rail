@@ -135,6 +135,25 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         return getMany(stationSearchVo);
     }
 
+    /**
+     * what:    按条件获取数量. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/25
+     */
+    public int getCount(StationSearchVo stationSearchVo) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("select ");
+        sql.append(" count(ID) ");
+        sql.append(" from ");
+        sql.append("T_STATION");
+        sql.append(" where 1=1 ");
+
+        sql.append(createSearchSql(stationSearchVo));
+        return count(sql.substring(0), stationSearchVo);
+    }
 
     /**
      * what:    设置查询条件. <br/>
