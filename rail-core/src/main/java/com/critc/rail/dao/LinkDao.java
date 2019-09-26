@@ -83,4 +83,8 @@ public class LinkDao extends BaseDao<Link, StationSearchVo> {
     public void deleteOne(Link link) {
         throw new UnsupportedOperationException();
     }
+
+    public void clear() {
+        links.clear();
+    }
 }

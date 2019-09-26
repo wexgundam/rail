@@ -21,6 +21,7 @@ import org.junit.runners.Suite;
         com.critc.rail.service.TestLinkService.class,
         com.critc.rail.service.TestRailNetworkElementService.class,
         com.critc.rail.service.TestStationService.class,
+        com.critc.rail.service.TestTrainlineDeportService.class,
 })
 public class TestAll {
 

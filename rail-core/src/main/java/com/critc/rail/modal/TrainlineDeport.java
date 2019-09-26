@@ -25,7 +25,7 @@ public class TrainlineDeport implements IRailNetworkElement {
     /**
      * 网格空间几何类型，默认是点类型，可调整为多边形类型
      */
-    private int gridGeometryType = Grid.GEOMETRY_TYPE_POINT;
+    private int gridGeometryType = Grid.GEOMETRY_TYPE_POLYGON;
     /**
      * 基点坐标的字符串表示，表示方式：x@y，"@"为分隔符
      */

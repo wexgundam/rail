@@ -236,12 +236,12 @@ public class LinkService {
             } catch (InterruptedException e) {
                 // 异常日志
                 logger.error("任务类: " + getClass().getSimpleName());
-                logger.error("任务方法: getAdjoins");
+                logger.error("任务方法: getAdjoinTrainlineDeportses");
                 logger.error("异常信息: " + e.getMessage());
             } catch (ExecutionException e) {
                 // 异常日志
                 logger.error("任务类: " + getClass().getSimpleName());
-                logger.error("任务方法: getAdjoins");
+                logger.error("任务方法: getAdjoinTrainlineDeportses");
                 logger.error("异常信息: " + e.getMessage());
             }
         }

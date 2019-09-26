@@ -43,7 +43,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
         sql.append(" ANCHOR_POINTS_STRING,");
         sql.append(" NAME,");
         sql.append(" JURISDICTION_BUREAU_ID,");
-//        sql.append(" (select NAME from T_BUREAU where id=:jurisdictionBureauId),");
+//        sql.append(" (select NAME from T_BUREAU where id=JURISDICTION_BUREAU_ID) as jurisdictionBureauName,");
         sql.append(" NAME_PINYIN,");
         sql.append(" NAME_INITIAL_PINYIN,");
         sql.append(" TELEGRAPH_CODE,");

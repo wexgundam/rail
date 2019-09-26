@@ -45,6 +45,7 @@ import java.util.concurrent.FutureTask;
  * # 获取给定行车调度台所辖车站. <br/>
  * # 获取给定车站的邻接车站. <br/>
  * # 获得给定节点间的邻接车站. <br/>
+ * # 获得给定车场的管辖站. <br/>
  * # 获得数量. <br/>
  * # 设置给定车站的管辖信息. <br/>
  * # 新增车站. <br/>
@@ -124,9 +125,7 @@ public class StationService {
      * @author 靳磊 created on 2019/9/16
      */
     public boolean adjoin(Station station, Link link) {
-//        synchronized (station) {
-            return railNetworkElementService.adjoin(station, link);
-//        }
+        return railNetworkElementService.adjoin(station, link);
     }
 
     /**
@@ -188,6 +187,7 @@ public class StationService {
      *
      * @author 靳磊 created on 2019/9/11
      */
+    @Transactional
     public List<BureauPartingStation> getBureauPartingStations() {
         List<BureauPartingStation> bureauPartingStations = new ArrayList<>();
 
@@ -198,10 +198,8 @@ public class StationService {
 
         for (Bureau bureau : bureauService.getAll()) {
             // 声明任务
-            Callable<List<BureauPartingStation>> callable = () -> {
-                //查询给定路局的分界口
-                return getBureauPartingStations(bureau);
-            };
+            //查询给定路局的分界口
+            Callable<List<BureauPartingStation>> callable = () -> getBureauPartingStations(bureau);
             // 创建FutureTask
             FutureTask<List<BureauPartingStation>> futureTask = new FutureTask<>(callable);
             // 添加到任务集合
@@ -428,6 +426,58 @@ public class StationService {
             adjoinStations.setStationB(stationB);
             return adjoinStations;
         }
+    }
+
+    /**
+     * what:    获得给定车场的管辖站. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/26
+     */
+    public Station getJurisdiction(Yard yard) {
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<Station>> futureTasks = new ArrayList<>();
+
+        for (Station station : getAll()) {
+            // 声明任务
+            //查询给定路局的分界口
+            Callable<Station> callable = () -> jurisdiction(station, yard) ? station : null;
+            // 创建FutureTask
+            FutureTask<Station> futureTask = new FutureTask<>(callable);
+            // 添加到任务集合
+            futureTasks.add(futureTask);
+            // 将任务提交到线程池
+            executorService.submit(futureTask);
+        }
+
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
+
+        // 返回结果
+        for (FutureTask<Station> task : futureTasks) {
+            try {
+                Station station = task.get();
+                if (station != null) {
+                    return station;
+                }
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getJurisdiction");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: getJurisdiction");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -57,7 +57,7 @@ public class Station implements IRailNetworkElement {
     /**
      * 管辖行车调度台名称
      */
-    private String jurisdictionTrainlineDeportName;
+    private String jurisdictionTdName;
     /**
      * 是否为路局分界口
      */
@@ -126,7 +126,7 @@ public class Station implements IRailNetworkElement {
                 ", jurisdictionBureauId=" + jurisdictionBureauId +
                 ", jurisdictionBureauName='" + jurisdictionBureauName + '\'' +
                 ", jurisdictionTdId=" + jurisdictionTdId +
-                ", jurisdictionTrainlineDeportName='" + jurisdictionTrainlineDeportName + '\'' +
+                ", jurisdictionTdName='" + jurisdictionTdName + '\'' +
                 ", bureauParting=" + bureauParting +
                 ", namePinyin='" + namePinyin + '\'' +
                 ", nameInitialPinyin='" + nameInitialPinyin + '\'' +
@@ -252,12 +252,12 @@ public class Station implements IRailNetworkElement {
         this.jurisdictionTdId = jurisdictionTdId;
     }
 
-    public String getJurisdictionTrainlineDeportName() {
-        return jurisdictionTrainlineDeportName;
+    public String getJurisdictionTdName() {
+        return jurisdictionTdName;
     }
 
-    public void setJurisdictionTrainlineDeportName(String jurisdictionTrainlineDeportName) {
-        this.jurisdictionTrainlineDeportName = jurisdictionTrainlineDeportName;
+    public void setJurisdictionTdName(String jurisdictionTdName) {
+        this.jurisdictionTdName = jurisdictionTdName;
     }
 
     public boolean isBureauParting() {

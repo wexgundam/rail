@@ -71,7 +71,7 @@ public class TestStationDao {
         Assert.assertEquals(station.getJurisdictionBureauId(), getOne.getJurisdictionBureauId());
         Assert.assertEquals(station.getJurisdictionBureauName(), getOne.getJurisdictionBureauName());
         Assert.assertEquals(station.getJurisdictionTdId(), getOne.getJurisdictionTdId());
-        Assert.assertEquals(station.getJurisdictionTrainlineDeportName(), getOne.getJurisdictionTrainlineDeportName());
+        Assert.assertEquals(station.getJurisdictionTdName(), getOne.getJurisdictionTdName());
         Assert.assertEquals(station.isBureauParting(), getOne.isBureauParting());
         Assert.assertEquals(station.getNamePinyin(), getOne.getNamePinyin());
         Assert.assertEquals(station.getNameInitialPinyin(), getOne.getNameInitialPinyin());
@@ -118,7 +118,7 @@ public class TestStationDao {
         Assert.assertEquals(station.getJurisdictionBureauId(), getOne.getJurisdictionBureauId());
         Assert.assertEquals(station.getJurisdictionBureauName(), getOne.getJurisdictionBureauName());
         Assert.assertEquals(station.getJurisdictionTdId(), getOne.getJurisdictionTdId());
-        Assert.assertEquals(station.getJurisdictionTrainlineDeportName(), getOne.getJurisdictionTrainlineDeportName());
+        Assert.assertEquals(station.getJurisdictionTdName(), getOne.getJurisdictionTdName());
         Assert.assertEquals(station.isBureauParting(), getOne.isBureauParting());
         Assert.assertEquals(station.getNamePinyin(), getOne.getNamePinyin());
         Assert.assertEquals(station.getNameInitialPinyin(), getOne.getNameInitialPinyin());
@@ -189,7 +189,7 @@ public class TestStationDao {
         Assert.assertEquals(station.getJurisdictionBureauId(), getOne.getJurisdictionBureauId());
         Assert.assertEquals(station.getJurisdictionBureauName(), getOne.getJurisdictionBureauName());
         Assert.assertEquals(station.getJurisdictionTdId(), getOne.getJurisdictionTdId());
-        Assert.assertEquals(station.getJurisdictionTrainlineDeportName(), getOne.getJurisdictionTrainlineDeportName());
+        Assert.assertEquals(station.getJurisdictionTdName(), getOne.getJurisdictionTdName());
         Assert.assertEquals(station.isBureauParting(), getOne.isBureauParting());
         Assert.assertEquals(station.getNamePinyin(), getOne.getNamePinyin());
         Assert.assertEquals(station.getNameInitialPinyin(), getOne.getNameInitialPinyin());

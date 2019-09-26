@@ -42,9 +42,9 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
         sql.append(" ANCHOR_POINTS_STRING,");
         sql.append(" NAME,");
         sql.append(" JURISDICTION_BUREAU_ID,");
-//        sql.append(" (select NAME from T_BUREAU where id=:jurisdictionBureauId),");
+//        sql.append(" (select NAME from T_BUREAU where ID=JURISDICTION_BUREAU_ID) as jurisdictionBureauName,");
         sql.append(" JURISDICTION_TD_ID,");
-//        sql.append(" (select NAME from T_TRAINLINE_DEPORT where id=:jurisdictionTdId),");
+        sql.append(" (select NAME from T_TRAINLINE_DEPORT where ID=JURISDICTION_TD_ID) as jurisdictionTdName,");
         sql.append(" BUREAU_PARTING,");
         sql.append(" NAME_PINYIN,");
         sql.append(" NAME_INITIAL_PINYIN,");
