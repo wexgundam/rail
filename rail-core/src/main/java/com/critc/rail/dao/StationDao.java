@@ -81,20 +81,6 @@ public class StationDao extends BaseDao<Station, StationSearchVo> {
     }
 
     /**
-     * what:    根据id查询一个车站. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public Station getOne(int id) {
-        StationSearchVo stationSearchVo = new StationSearchVo();
-        stationSearchVo.setIdEqual(id);
-        return getOne(stationSearchVo);
-    }
-
-    /**
      * what:    获取全路车站. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>

@@ -9,6 +9,7 @@ import com.critc.network.modal.Grid;
 import com.critc.rail.modal.Bureau;
 import com.critc.rail.modal.Station;
 import com.critc.rail.modal.TrainlineDeport;
+import com.critc.rail.service.TrainlineDeportService;
 import com.critc.rail.vo.TrainlineDeportSearchVo;
 import com.critc.rail.vo.TrainlineDeportSearchVo;
 import org.junit.Assert;
@@ -61,7 +62,9 @@ public class TestTrainlineDeportDao {
     public void testCRUD() {
         int id = trainlineDeportDao.addOne(trainlineDeport);
         trainlineDeport.setId(id);
-        TrainlineDeport getOne = trainlineDeportDao.getOne(trainlineDeport.getId());
+        TrainlineDeportSearchVo trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo.setIdEqual(id);
+        TrainlineDeport getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
         Assert.assertNotNull(getOne);
         Assert.assertEquals(trainlineDeport.getGridGeometryType(), getOne.getGridGeometryType());
         Assert.assertEquals(trainlineDeport.getBasePointString(), getOne.getBasePointString());
@@ -79,7 +82,7 @@ public class TestTrainlineDeportDao {
         Assert.assertEquals(trainlineDeport.getLastEditorRealName(), getOne.getLastEditorRealName());
         Assert.assertNotNull(getOne.getLastEditedAt());
 
-        TrainlineDeportSearchVo trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo = new TrainlineDeportSearchVo();
         trainlineDeportSearchVo.setIdEqual(id);
         getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
         Assert.assertTrue(trainlineDeport.equals(getOne));
@@ -150,7 +153,9 @@ public class TestTrainlineDeportDao {
         Assert.assertTrue(getMany.size() > 0);
 
         trainlineDeportDao.updateOne(this.trainlineDeport);
-        getOne = trainlineDeportDao.getOne(this.trainlineDeport.getId());
+        trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo.setIdEqual(id);
+        getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
         Assert.assertNotNull(getOne);
         Assert.assertEquals(this.trainlineDeport.getGridGeometryType(), getOne.getGridGeometryType());
         Assert.assertEquals(this.trainlineDeport.getBasePointString(), getOne.getBasePointString());
@@ -169,7 +174,9 @@ public class TestTrainlineDeportDao {
         Assert.assertNotNull(getOne.getLastEditedAt());
 
         trainlineDeportDao.deleteOne(this.trainlineDeport);
-        getOne = trainlineDeportDao.getOne(this.trainlineDeport.getId());
+        trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo.setIdEqual(id);
+        getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
         Assert.assertNull(getOne);
     }
 }

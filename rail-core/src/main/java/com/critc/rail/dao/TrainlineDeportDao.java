@@ -8,8 +8,6 @@ package com.critc.rail.dao;
 import com.critc.core.dao.BaseDao;
 import com.critc.rail.modal.Bureau;
 import com.critc.rail.modal.TrainlineDeport;
-import com.critc.rail.modal.TrainlineDeport;
-import com.critc.rail.vo.TrainlineDeportSearchVo;
 import com.critc.rail.vo.TrainlineDeportSearchVo;
 import com.critc.util.string.StringUtil;
 import org.springframework.stereotype.Repository;
@@ -34,7 +32,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public List<TrainlineDeport> getMany(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
+    public List<TrainlineDeport> getMany(TrainlineDeportSearchVo trainlineDeportSearchVo) {
         StringBuffer sql = new StringBuffer();
         sql.append("select ");
         sql.append(" ID,");
@@ -57,8 +55,8 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
         sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where 1=1 ");
 
-        sql.append(createSearchSql(TrainlineDeportSearchVo));
-        return list(sql.substring(0), TrainlineDeportSearchVo);
+        sql.append(createSearchSql(trainlineDeportSearchVo));
+        return list(sql.substring(0), trainlineDeportSearchVo);
     }
 
     /**
@@ -69,27 +67,13 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public TrainlineDeport getOne(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
-        List<TrainlineDeport> many = getMany(TrainlineDeportSearchVo);
+    public TrainlineDeport getOne(TrainlineDeportSearchVo trainlineDeportSearchVo) {
+        List<TrainlineDeport> many = getMany(trainlineDeportSearchVo);
         if (many.size() > 0) {
             return many.get(0);
         } else {
             return null;
         }
-    }
-
-    /**
-     * what:    根据id查询一个行车调度台. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/11
-     */
-    public TrainlineDeport getOne(int id) {
-        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
-        TrainlineDeportSearchVo.setIdEqual(id);
-        return getOne(TrainlineDeportSearchVo);
     }
 
     /**
@@ -101,8 +85,8 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      * @author 靳磊 created on 2019/9/11
      */
     public List<TrainlineDeport> getAll() {
-        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
-        return getMany(TrainlineDeportSearchVo);
+        TrainlineDeportSearchVo trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        return getMany(trainlineDeportSearchVo);
     }
 
     /**
@@ -114,9 +98,9 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      * @author 靳磊 created on 2019/9/11
      */
     public List<TrainlineDeport> getMany(Bureau bureau) {
-        TrainlineDeportSearchVo TrainlineDeportSearchVo = new TrainlineDeportSearchVo();
-        TrainlineDeportSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
-        return getMany(TrainlineDeportSearchVo);
+        TrainlineDeportSearchVo trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo.setJurisdictionBureauIdEqual(bureau.getId());
+        return getMany(trainlineDeportSearchVo);
     }
 
     /**
@@ -127,7 +111,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/25
      */
-    public int getCount(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
+    public int getCount(TrainlineDeportSearchVo trainlineDeportSearchVo) {
         StringBuffer sql = new StringBuffer();
         sql.append("select ");
         sql.append(" count(ID) ");
@@ -135,8 +119,8 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
         sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where 1=1 ");
 
-        sql.append(createSearchSql(TrainlineDeportSearchVo));
-        return count(sql.substring(0), TrainlineDeportSearchVo);
+        sql.append(createSearchSql(trainlineDeportSearchVo));
+        return count(sql.substring(0), trainlineDeportSearchVo);
     }
 
     /**
@@ -147,24 +131,24 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/20
      */
-    private String createSearchSql(TrainlineDeportSearchVo TrainlineDeportSearchVo) {
+    private String createSearchSql(TrainlineDeportSearchVo trainlineDeportSearchVo) {
         String sql = "";
-        if (TrainlineDeportSearchVo.getIdEqual() != null) {
+        if (trainlineDeportSearchVo.getIdEqual() != null) {
             sql += " and ID=:idEqual";
         }
-        if (TrainlineDeportSearchVo.getJurisdictionBureauIdEqual() != null) {
+        if (trainlineDeportSearchVo.getJurisdictionBureauIdEqual() != null) {
             sql += " and JURISDICTION_BUREAU_ID=:jurisdictionBureauIdEqual";
         }
-        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getNameEqual())) {
+        if (!StringUtil.isNullOrEmpty(trainlineDeportSearchVo.getNameEqual())) {
             sql += " and NAME=:nameEqual";
         }
-        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getNameLike())) {
+        if (!StringUtil.isNullOrEmpty(trainlineDeportSearchVo.getNameLike())) {
             sql += " and NAME like :nameLike";
         }
-        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getPinyinLike())) {
+        if (!StringUtil.isNullOrEmpty(trainlineDeportSearchVo.getPinyinLike())) {
             sql += " and (NAME_PINYIN like :pinyinLike or NAME_INITIAL_PINYIN like :pinyinLike)";
         }
-        if (!StringUtil.isNullOrEmpty(TrainlineDeportSearchVo.getTelegraphCodeLike())) {
+        if (!StringUtil.isNullOrEmpty(trainlineDeportSearchVo.getTelegraphCodeLike())) {
             sql += " and TELEGRAPH_CODE like :TelegraphCodeLike";
         }
 
@@ -179,7 +163,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public int addOne(TrainlineDeport TrainlineDeport) {
+    public int addOne(TrainlineDeport trainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("insert into ");
         sql.append("T_TRAINLINE_DEPORT");
@@ -217,7 +201,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
         sql.append(" sysdate");
         sql.append(")");
 
-        return insertForId(sql.substring(0), TrainlineDeport, "id");
+        return insertForId(sql.substring(0), trainlineDeport, "id");
     }
 
     /**
@@ -228,7 +212,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void updateOne(TrainlineDeport TrainlineDeport) {
+    public void updateOne(TrainlineDeport trainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("update ");
         sql.append("T_TRAINLINE_DEPORT");
@@ -246,7 +230,7 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
         sql.append(" LAST_EDITED_AT=sysdate ");
         sql.append(" where ID=:id");
 
-        update(sql.substring(0), TrainlineDeport);
+        update(sql.substring(0), trainlineDeport);
     }
 
     /**
@@ -257,12 +241,12 @@ public class TrainlineDeportDao extends BaseDao<TrainlineDeport, TrainlineDeport
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void deleteOne(TrainlineDeport TrainlineDeport) {
+    public void deleteOne(TrainlineDeport trainlineDeport) {
         StringBuffer sql = new StringBuffer();
         sql.append("delete ");
         sql.append("T_TRAINLINE_DEPORT");
         sql.append(" where ID=:id");
 
-        delete(sql.substring(0), TrainlineDeport.getId());
+        delete(sql.substring(0), trainlineDeport.getId());
     }
 }

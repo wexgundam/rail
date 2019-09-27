@@ -62,7 +62,9 @@ public class TestStationDao {
     public void testCRUD() {
         int id = stationDao.addOne(station);
         station.setId(id);
-        Station getOne = stationDao.getOne(station.getId());
+        StationSearchVo stationSearchVo = new StationSearchVo();
+        stationSearchVo.setIdEqual(id);
+        Station getOne = stationDao.getOne(stationSearchVo);
         Assert.assertNotNull(getOne);
         Assert.assertEquals(station.getGridGeometryType(), getOne.getGridGeometryType());
         Assert.assertEquals(station.getBasePointString(), getOne.getBasePointString());
@@ -83,7 +85,7 @@ public class TestStationDao {
         Assert.assertEquals(station.getLastEditorRealName(), getOne.getLastEditorRealName());
         Assert.assertNotNull(getOne.getLastEditedAt());
 
-        StationSearchVo stationSearchVo = new StationSearchVo();
+        stationSearchVo = new StationSearchVo();
         stationSearchVo.setIdEqual(id);
         getOne = stationDao.getOne(stationSearchVo);
         Assert.assertTrue(station.equals(getOne));
@@ -180,7 +182,9 @@ public class TestStationDao {
         Assert.assertTrue(getMany.size() > 0);
 
         stationDao.updateOne(station);
-        getOne = stationDao.getOne(station.getId());
+        stationSearchVo = new StationSearchVo();
+        stationSearchVo.setIdEqual(id);
+        getOne = stationDao.getOne(stationSearchVo);
         Assert.assertNotNull(getOne);
         Assert.assertEquals(station.getGridGeometryType(), getOne.getGridGeometryType());
         Assert.assertEquals(station.getBasePointString(), getOne.getBasePointString());
@@ -202,7 +206,9 @@ public class TestStationDao {
         Assert.assertNotNull(getOne.getLastEditedAt());
 
         stationDao.deleteOne(station);
-        getOne = stationDao.getOne(station.getId());
+        stationSearchVo = new StationSearchVo();
+        stationSearchVo.setIdEqual(id);
+        getOne = stationDao.getOne(stationSearchVo);
         Assert.assertNull(getOne);
     }
 }
