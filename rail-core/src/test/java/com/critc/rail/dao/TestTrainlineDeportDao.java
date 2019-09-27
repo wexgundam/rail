@@ -97,11 +97,6 @@ public class TestTrainlineDeportDao {
         List<TrainlineDeport> getMany = trainlineDeportDao.getMany(trainlineDeportSearchVo);
         Assert.assertTrue(getMany.size() > 0);
 
-        trainlineDeportSearchVo = new TrainlineDeportSearchVo();
-        trainlineDeportSearchVo.setTelegraphCodeEqual(trainlineDeport.getTelegraphCode());
-        getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
-        Assert.assertTrue(trainlineDeport.equals(getOne));
-
         getOne = null;
         for (TrainlineDeport one : getMany) {
             if (one.getId() == id) {
@@ -135,6 +130,12 @@ public class TestTrainlineDeportDao {
         trainlineDeportSearchVo.setTelegraphCodeLike(trainlineDeport.getTelegraphCode());
         getMany = trainlineDeportDao.getMany(trainlineDeportSearchVo);
         Assert.assertTrue(getMany.size() > 0);
+
+        trainlineDeportSearchVo = new TrainlineDeportSearchVo();
+        trainlineDeportSearchVo.setTelegraphCodeEqual(trainlineDeport.getTelegraphCode());
+        getOne = trainlineDeportDao.getOne(trainlineDeportSearchVo);
+        Assert.assertTrue(trainlineDeport.equals(getOne));
+
 
         trainlineDeportSearchVo = new TrainlineDeportSearchVo();
         trainlineDeportSearchVo.setPinyinLike(trainlineDeport.getNamePinyin());

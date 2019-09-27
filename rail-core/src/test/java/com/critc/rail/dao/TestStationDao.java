@@ -40,7 +40,6 @@ public class TestStationDao {
     @Before
     public void before() {
         station = new Station();
-        station.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
         station.setBasePointString("b");
         station.setAnchorPointsString("a");
         station.setJurisdictionBureauId(2);
@@ -100,11 +99,6 @@ public class TestStationDao {
         List<Station> getMany = stationDao.getMany(stationSearchVo);
         Assert.assertTrue(getMany.size() > 0);
 
-        stationSearchVo = new StationSearchVo();
-        stationSearchVo.setTelegraphCodeEqual(station.getTelegraphCode());
-        getOne = stationDao.getOne(stationSearchVo);
-        Assert.assertTrue(station.equals(getOne));
-
         getOne = null;
         for (Station one : getMany) {
             if (one.getId() == id) {
@@ -151,6 +145,11 @@ public class TestStationDao {
         stationSearchVo.setTelegraphCodeLike(station.getTelegraphCode());
         getMany = stationDao.getMany(stationSearchVo);
         Assert.assertTrue(getMany.size() > 0);
+
+        stationSearchVo = new StationSearchVo();
+        stationSearchVo.setTelegraphCodeEqual(station.getTelegraphCode());
+        getOne = stationDao.getOne(stationSearchVo);
+        Assert.assertTrue(station.equals(getOne));
 
         stationSearchVo = new StationSearchVo();
         stationSearchVo.setPinyinLike(station.getNamePinyin());

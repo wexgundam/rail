@@ -17,7 +17,7 @@ public class BureauSearchVo {
     /**
      * id等于
      */
-    private int idEqual;
+    private Integer idEqual;
     /**
      * 全称等于
      */
@@ -33,7 +33,7 @@ public class BureauSearchVo {
     /**
      * 编码等于
      */
-    private int codeEqual;
+    private Integer codeEqual;
     /**
      * 电报码等于
      */
@@ -63,11 +63,11 @@ public class BureauSearchVo {
         this.shortNameEqual = shortNameEqual;
     }
 
-    public int getCodeEqual() {
+    public Integer getCodeEqual() {
         return codeEqual;
     }
 
-    public void setCodeEqual(int codeEqual) {
+    public void setCodeEqual(Integer codeEqual) {
         this.codeEqual = codeEqual;
     }
 
@@ -79,11 +79,11 @@ public class BureauSearchVo {
         this.telegraphCodeEqual = telegraphCodeEqual;
     }
 
-    public int getIdEqual() {
+    public Integer getIdEqual() {
         return idEqual;
     }
 
-    public void setIdEqual(int idEqual) {
+    public void setIdEqual(Integer idEqual) {
         this.idEqual = idEqual;
     }
 }
