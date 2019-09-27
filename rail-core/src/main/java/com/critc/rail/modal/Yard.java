@@ -43,22 +43,6 @@ public class Yard implements IRailNetworkElement {
      */
     private String name;
     /**
-     * 管辖局Id
-     */
-    private int jurisdictionBureauId;
-    /**
-     * 管辖局名称
-     */
-    private String jurisdictionBureauName;
-    /**
-     * 管辖行车调度台id
-     */
-    private int jurisdictionTrainlineDeportId;
-    /**
-     * 管辖行车调度台名称
-     */
-    private String jurisdictionTrainlineDeportName;
-    /**
      * 管辖车站id
      */
     private int jurisdictionStationId;
@@ -74,6 +58,10 @@ public class Yard implements IRailNetworkElement {
      * 名称首字母拼音吗
      */
     private String nameInitialPinyin;
+    /**
+     * 电报码
+     */
+    private String telegraphCode;
     /**
      * 创建人Id，只在保存新增数据时填写，以后不可更改
      */
@@ -123,14 +111,11 @@ public class Yard implements IRailNetworkElement {
                 ", anchorPointsString='" + anchorPointsString + '\'' +
                 ", grid=" + grid +
                 ", name='" + name + '\'' +
-                ", jurisdictionBureauId=" + jurisdictionBureauId +
-                ", jurisdictionBureauName='" + jurisdictionBureauName + '\'' +
-                ", jurisdictionTrainlineDeportId=" + jurisdictionTrainlineDeportId +
-                ", jurisdictionTrainlineDeportName='" + jurisdictionTrainlineDeportName + '\'' +
                 ", jurisdictionStationId=" + jurisdictionStationId +
                 ", jurisdictionStationName='" + jurisdictionStationName + '\'' +
                 ", namePinyin='" + namePinyin + '\'' +
                 ", nameInitialPinyin='" + nameInitialPinyin + '\'' +
+                ", telegraphCode='" + telegraphCode + '\'' +
                 ", creatorId=" + creatorId +
                 ", creatorRealName='" + creatorRealName + '\'' +
                 ", createdAt=" + createdAt +
@@ -196,38 +181,6 @@ public class Yard implements IRailNetworkElement {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getJurisdictionBureauId() {
-        return jurisdictionBureauId;
-    }
-
-    public void setJurisdictionBureauId(int jurisdictionBureauId) {
-        this.jurisdictionBureauId = jurisdictionBureauId;
-    }
-
-    public String getJurisdictionBureauName() {
-        return jurisdictionBureauName;
-    }
-
-    public void setJurisdictionBureauName(String jurisdictionBureauName) {
-        this.jurisdictionBureauName = jurisdictionBureauName;
-    }
-
-    public int getJurisdictionTrainlineDeportId() {
-        return jurisdictionTrainlineDeportId;
-    }
-
-    public void setJurisdictionTrainlineDeportId(int jurisdictionTrainlineDeportId) {
-        this.jurisdictionTrainlineDeportId = jurisdictionTrainlineDeportId;
-    }
-
-    public String getJurisdictionTrainlineDeportName() {
-        return jurisdictionTrainlineDeportName;
-    }
-
-    public void setJurisdictionTrainlineDeportName(String jurisdictionTrainlineDeportName) {
-        this.jurisdictionTrainlineDeportName = jurisdictionTrainlineDeportName;
     }
 
     public int getJurisdictionStationId() {
@@ -320,5 +273,13 @@ public class Yard implements IRailNetworkElement {
     @Override
     public void setLastEditedAt(Date lastEditedAt) {
         this.lastEditedAt = lastEditedAt;
+    }
+
+    public String getTelegraphCode() {
+        return telegraphCode;
+    }
+
+    public void setTelegraphCode(String telegraphCode) {
+        this.telegraphCode = telegraphCode;
     }
 }

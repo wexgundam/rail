@@ -35,6 +35,10 @@ import java.util.List;
 public class TestStationDao {
     @Autowired
     private StationDao stationDao;
+    @Autowired
+    private BureauDao bureauDao;
+    @Autowired
+    private TrainlineDeportDao trainlineDeportDao;
     private Station station;
 
     @Before
@@ -59,6 +63,18 @@ public class TestStationDao {
     @Transactional
     @Rollback
     public void testCRUD() {
+        Bureau bureau = new Bureau();
+        bureau.setName("b");
+        int bureauId = bureauDao.addOne(bureau);
+        station.setJurisdictionBureauId(bureauId);
+        station.setJurisdictionBureauName(bureau.getName());
+
+        TrainlineDeport trainlineDeport = new TrainlineDeport();
+        trainlineDeport.setName("td");
+        int trainlineDeportId = trainlineDeportDao.addOne(trainlineDeport);
+        station.setJurisdictionTdId(trainlineDeportId);
+        station.setJurisdictionTdName(trainlineDeport.getName());
+
         int id = stationDao.addOne(station);
         station.setId(id);
         StationSearchVo stationSearchVo = new StationSearchVo();
@@ -170,12 +186,12 @@ public class TestStationDao {
         stationSearchVo.setIdEqual(-1);
         Assert.assertEquals(0, stationDao.getCount(stationSearchVo));
 
-        Bureau bureau = new Bureau();
+        bureau = new Bureau();
         bureau.setId(station.getJurisdictionBureauId());
         getMany = stationDao.getMany(bureau);
         Assert.assertTrue(getMany.size() > 0);
 
-        TrainlineDeport trainlineDeport = new TrainlineDeport();
+        trainlineDeport = new TrainlineDeport();
         trainlineDeport.setId(station.getJurisdictionTdId());
         getMany = stationDao.getMany(trainlineDeport);
         Assert.assertTrue(getMany.size() > 0);

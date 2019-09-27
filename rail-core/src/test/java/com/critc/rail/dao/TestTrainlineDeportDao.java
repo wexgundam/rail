@@ -7,10 +7,7 @@ package com.critc.rail.dao;
 
 import com.critc.network.modal.Grid;
 import com.critc.rail.modal.Bureau;
-import com.critc.rail.modal.Station;
 import com.critc.rail.modal.TrainlineDeport;
-import com.critc.rail.service.TrainlineDeportService;
-import com.critc.rail.vo.TrainlineDeportSearchVo;
 import com.critc.rail.vo.TrainlineDeportSearchVo;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +33,8 @@ import java.util.List;
 @ContextConfiguration("/spring/applicationContext-database.xml")
 public class TestTrainlineDeportDao {
     @Autowired
+    private BureauDao bureauDao;
+    @Autowired
     private TrainlineDeportDao trainlineDeportDao;
     private TrainlineDeport trainlineDeport;
 
@@ -60,6 +59,12 @@ public class TestTrainlineDeportDao {
     @Transactional
     @Rollback
     public void testCRUD() {
+        Bureau bureau = new Bureau();
+        bureau.setName("b");
+        int bureauId = bureauDao.addOne(bureau);
+        trainlineDeport.setJurisdictionBureauId(bureauId);
+        trainlineDeport.setJurisdictionBureauName(bureau.getName());
+
         int id = trainlineDeportDao.addOne(trainlineDeport);
         trainlineDeport.setId(id);
         TrainlineDeportSearchVo trainlineDeportSearchVo = new TrainlineDeportSearchVo();
@@ -148,7 +153,7 @@ public class TestTrainlineDeportDao {
         trainlineDeportSearchVo.setIdEqual(-1);
         Assert.assertEquals(0, trainlineDeportDao.getCount(trainlineDeportSearchVo));
 
-        Bureau bureau = new Bureau();
+        bureau = new Bureau();
         bureau.setId(trainlineDeport.getJurisdictionBureauId());
         getMany = trainlineDeportDao.getMany(bureau);
         Assert.assertTrue(getMany.size() > 0);

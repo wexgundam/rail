@@ -19,6 +19,7 @@ import org.junit.runners.Suite;
         com.critc.rail.dao.TestBureauDao.class,
         com.critc.rail.dao.TestStationDao.class,
         com.critc.rail.dao.TestTrainlineDeportDao.class,
+        com.critc.rail.dao.TestYardDao.class,
         com.critc.rail.service.TestBureauService.class,
         com.critc.rail.service.TestLinkService.class,
         com.critc.rail.service.TestRailNetworkElementService.class,

@@ -5,6 +5,7 @@
  */
 package com.critc.rail.service;
 
+import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.critc.rail.dao.StationDao;
 import com.critc.rail.modal.AdjoinStations;
 import com.critc.rail.modal.Bureau;
@@ -45,6 +46,7 @@ import java.util.concurrent.FutureTask;
  * # 获取给定行车调度台所辖车站. <br/>
  * # 获取给定车站的邻接车站. <br/>
  * # 获得给定节点间的邻接车站. <br/>
+ * # 获取给定车场的邻接车站. <br/>
  * # 获得给定车场的管辖站. <br/>
  * # 获得数量. <br/>
  * # 设置给定车站的管辖信息. <br/>
@@ -363,7 +365,6 @@ public class StationService {
      * @author 靳磊 created on 2019/9/11
      */
     public AdjoinStations getAdjoinStations(Link link) {
-
         // 声明固定线程池。后期根据性能优化
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         // 任务集合
@@ -426,6 +427,26 @@ public class StationService {
             adjoinStations.setStationB(stationB);
             return adjoinStations;
         }
+    }
+
+    /**
+     * what:    获取给定车场的邻接车站. <br/>
+     * 获得yard邻接的节点间. <br/>
+     * 获得每个节点间邻接的车站. <br/>
+     * 返回结果. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/9/11
+     */
+    public AdjoinStations getAdjoinStations(Yard yard) {
+        //TODO
+        return null;
+//
+//        for(Link link: linkService.getAdjoins(yard)){
+//
+//        }
     }
 
     /**
