@@ -48,7 +48,6 @@ public class TestRailNetworkElementService {
         String anchorPointsString = anchorPoint1String + POINT_SPLITTER + anchorPoint2String;
 
         Station station = new Station();
-        station.setId(1234);
         station.setBasePointString(basePointString);
         station.setAnchorPointsString(anchorPointsString);
         railNetworkService.updateGridOfElement(station);

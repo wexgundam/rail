@@ -5,7 +5,6 @@
  */
 package com.critc.rail.service;
 
-import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.critc.rail.dao.StationDao;
 import com.critc.rail.modal.AdjoinStations;
 import com.critc.rail.modal.Bureau;
@@ -19,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -35,7 +32,6 @@ import java.util.concurrent.FutureTask;
  * what:    调度视角的车站服务. <br/>
  * # 检测两个车站是否邻接. <br/>
  * # 检测给定车站是否管辖给定车场. <br/>
- * # 检测给定车站是否邻接给定节点间. <br/
  * # 按条件查询一组车站. <br/>
  * # 按条件查询一个车站. <br/>
  * # 获取全路车站. <br/>
@@ -116,18 +112,6 @@ public class StationService {
      */
     public boolean jurisdiction(Station station, Yard yard) {
         return railNetworkElementService.jurisdiction(station, yard);
-    }
-
-    /**
-     * what:    检测给定车站是否邻接给定节点间. <br/>
-     * when:    (这里描述这个类的适用时机 – 可选).<br/>
-     * how:     (这里描述这个类的使用方法 – 可选).<br/>
-     * warning: (这里描述这个类的注意事项 – 可选).<br/>
-     *
-     * @author 靳磊 created on 2019/9/16
-     */
-    public boolean adjoin(Station station, Link link) {
-        return railNetworkElementService.adjoin(station, link);
     }
 
     /**
@@ -342,7 +326,7 @@ public class StationService {
         //邻接车站集合
         List<AdjoinStations> adjoinStationses = new ArrayList<>();
         //获得给定车站邻接的节点间
-        for (Link link : linkService.getAdjoins(station)) {
+        for (Link link : linkService.getMany(station)) {
             AdjoinStations adjoinStations = getAdjoinStations(link);
             //调换stationA和stationB的位置，使得stationA为给定的station
             if (!adjoinStations.getStationA().equals(station)) {
@@ -374,7 +358,7 @@ public class StationService {
             // 声明任务
             Callable<Station> callable = () -> {
                 //查询给定路局的分界口
-                return adjoin(station, link) ? station : null;
+                return linkService.adjoin(station, link) ? station : null;
             };
             // 创建FutureTask
             FutureTask<Station> futureTask = new FutureTask<>(callable);
@@ -444,7 +428,7 @@ public class StationService {
         //TODO
         return null;
 //
-//        for(Link link: linkService.getAdjoins(yard)){
+//        for(Link link: linkService.getMany(yard)){
 //
 //        }
     }

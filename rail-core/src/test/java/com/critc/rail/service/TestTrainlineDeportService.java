@@ -151,11 +151,9 @@ public class TestTrainlineDeportService {
     @Test
     public void testGetAdjoinTrainlineDeportses() {
         Bureau bureauA = new Bureau();
-        bureauA.setId(1);
         bureauA.setAnchorPointsString("0@0;0@100;100@100;100@0");
         bureauService.addOne(bureauA);
         Bureau bureauB = new Bureau();
-        bureauB.setId(2);
         bureauB.setAnchorPointsString("100@100;100@200;200@200;200@100");
         bureauService.addOne(bureauB);
 
@@ -260,7 +258,9 @@ public class TestTrainlineDeportService {
             Assert.assertEquals(trainlineDeportC, adjoinTrainlineDeportses.get(0).getTrainlineDeportA());
             Assert.assertEquals(stationC, adjoinTrainlineDeportses.get(0).getStationA());
         } finally {
-            linkDao.clear();
+            linkService.deleteOne(linkA);
+            linkService.deleteOne(linkB);
+            linkService.deleteOne(linkC);
             stationService.deleteOne(stationA);
             stationService.deleteOne(stationB);
             stationService.deleteOne(stationC);
@@ -323,11 +323,9 @@ public class TestTrainlineDeportService {
     @Rollback
     public void testSetJurisdiction() {
         Bureau bureauA = new Bureau();
-        bureauA.setId(1);
         bureauA.setAnchorPointsString("0@0;0@100;100@100;100@0");
         bureauService.addOne(bureauA);
         Bureau bureauB = new Bureau();
-        bureauB.setId(2);
         bureauB.setAnchorPointsString("100@100;100@200;200@200;200@100");
         bureauService.addOne(bureauB);
 

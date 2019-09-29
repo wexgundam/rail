@@ -23,22 +23,6 @@ public class Link implements IRailNetworkElement {
      */
     private int id;
     /**
-     * 全称
-     */
-    private String name;
-    /**
-     * 简称
-     */
-    private String shortName;
-    /**
-     * 编码
-     */
-    private int code;
-    /**
-     * 电报码
-     */
-    private String telegraphCode;
-    /**
      * 网格空间几何类型，默认是线类型
      */
     private int gridGeometryType = Grid.GEOMETRY_TYPE_LINE_STRING;
@@ -98,10 +82,6 @@ public class Link implements IRailNetworkElement {
     public String toString() {
         return "Link{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", shortName='" + shortName + '\'' +
-                ", code=" + code +
-                ", telegraphCode='" + telegraphCode + '\'' +
                 ", gridGeometryType=" + gridGeometryType +
                 ", basePointString='" + basePointString + '\'' +
                 ", anchorPointsString='" + anchorPointsString + '\'' +
@@ -121,38 +101,6 @@ public class Link implements IRailNetworkElement {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getTelegraphCode() {
-        return telegraphCode;
-    }
-
-    public void setTelegraphCode(String telegraphCode) {
-        this.telegraphCode = telegraphCode;
     }
 
     @Override

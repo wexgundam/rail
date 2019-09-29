@@ -50,6 +50,8 @@ public class TestStationService {
     private LinkDao linkDao;
 
     @Test
+    @Transactional
+    @Rollback
     public void testStationsAdjoin() {
         //点形车站
         Station stationA = new Station();
@@ -96,8 +98,6 @@ public class TestStationService {
         result = stationService.adjoin(stationA, stationC);
         Assert.assertFalse(result);
         System.out.println(DateUtil.getSystemTime());
-
-        linkDao.clear();
     }
 
     @Test
@@ -119,33 +119,6 @@ public class TestStationService {
     }
 
     @Test
-    public void testStationLinkAdjoin() {
-        //点形车站
-        Station stationA = new Station();
-        stationA.setAnchorPointsString("0@0");
-        Station stationB = new Station();
-        stationB.setAnchorPointsString("100@100");
-        Station stationC = new Station();
-        stationC.setAnchorPointsString("50@30");
-        //多边形车站
-        Station stationD = new Station();
-        stationD.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
-        stationD.setAnchorPointsString("0@0;0@20;10@20");
-        Station stationE = new Station();
-        stationE.setGridGeometryType(Grid.GEOMETRY_TYPE_POLYGON);
-        stationE.setAnchorPointsString("20@10;20@20;10@20");
-
-        Link link = new Link();
-        link.setAnchorPointsString("0@0;100@100");
-
-        Assert.assertTrue(stationService.adjoin(stationA, link));
-        Assert.assertTrue(stationService.adjoin(stationB, link));
-        Assert.assertFalse(stationService.adjoin(stationC, link));
-        Assert.assertTrue(stationService.adjoin(stationD, link));
-        Assert.assertFalse(stationService.adjoin(stationE, link));
-    }
-
-    @Test
     public void testGetMany() {
         //委托StationDao
     }
@@ -161,15 +134,11 @@ public class TestStationService {
     }
 
     @Test
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    @Rollback
     public void testGetBureauPartingStations() {
         Bureau bureauA = new Bureau();
-        bureauA.setId(1);
         bureauA.setAnchorPointsString("0@0;0@100;100@100;100@0");
         bureauService.addOne(bureauA);
         Bureau bureauB = new Bureau();
-        bureauB.setId(2);
         bureauB.setAnchorPointsString("100@100;100@200;200@200;200@100");
         bureauService.addOne(bureauB);
 
@@ -192,17 +161,14 @@ public class TestStationService {
         stationService.addOne(stationC);
 
         Station stationD = new Station();
-        stationD.setId(4);
         stationD.setAnchorPointsString("180@180");
         stationService.setJurisdiction(stationD);
         stationService.addOne(stationD);
 
         Link linkA = new Link();
-        linkA.setId(5);
         linkA.setAnchorPointsString("80@80;90@93;102@105;110@110");
         linkService.addOne(linkA);
         Link linkB = new Link();
-        linkB.setId(6);
         linkB.setAnchorPointsString("32@54;123@231");
         linkService.addOne(linkB);
 
@@ -248,6 +214,9 @@ public class TestStationService {
         Assert.assertNotNull(bureauPartingStations.get(0).getAdjoinBureau());
         Assert.assertTrue(bureauPartingStations.get(0).getAdjoinBureau().equals(bureauB));
 
+        linkService.deleteOne(linkA);
+        linkService.deleteOne(linkB);
+
         stationService.deleteOne(stationA);
         stationService.deleteOne(stationB);
         stationService.deleteOne(stationC);
@@ -255,8 +224,6 @@ public class TestStationService {
 
         bureauService.deleteOne(bureauA);
         bureauService.deleteOne(bureauB);
-
-        linkDao.clear();
     }
 
 
@@ -280,16 +247,13 @@ public class TestStationService {
         stationService.addOne(stationC);
 
         Station stationD = new Station();
-        stationD.setId(4);
         stationD.setAnchorPointsString("180@180");
         stationService.addOne(stationD);
 
         Link linkA = new Link();
-        linkA.setId(5);
         linkA.setAnchorPointsString("80@80;90@93;102@105;110@110");
         linkService.addOne(linkA);
         Link linkB = new Link();
-        linkB.setId(6);
         linkB.setAnchorPointsString("32@54;123@231");
         linkService.addOne(linkB);
 
@@ -337,8 +301,6 @@ public class TestStationService {
 
         adjoinStations = stationService.getAdjoinStations(linkB);
         Assert.assertNull(adjoinStations);
-
-        linkDao.clear();
     }
 
 
@@ -347,19 +309,16 @@ public class TestStationService {
     @Rollback
     public void testGetJurisdiction() {
         Station stationA = new Station();
-        stationA.setId(3);
         stationA.setAnchorPointsString("10@10");
         stationService.setJurisdiction(stationA);
         stationService.addOne(stationA);
 
         Station stationB = new Station();
-        stationB.setId(4);
         stationB.setAnchorPointsString("110@110");
         stationService.setJurisdiction(stationB);
         stationService.addOne(stationA);
 
         Station stationC = new Station();
-        stationC.setId(5);
         stationC.setAnchorPointsString("300@300");
         stationService.setJurisdiction(stationC);
         stationService.addOne(stationA);
@@ -388,11 +347,9 @@ public class TestStationService {
     @Rollback
     public void testSetJurisdiction() {
         Bureau bureauA = new Bureau();
-        bureauA.setId(1);
         bureauA.setAnchorPointsString("0@0;0@100;100@100;100@0");
         bureauService.addOne(bureauA);
         Bureau bureauB = new Bureau();
-        bureauB.setId(2);
         bureauB.setAnchorPointsString("100@100;100@200;200@200;200@100");
         bureauService.addOne(bureauB);
 
@@ -404,21 +361,18 @@ public class TestStationService {
         trainlineDeportService.addOne(trainlineDeportB);
 
         Station stationA = new Station();
-        stationA.setId(3);
         stationA.setAnchorPointsString("10@10");
         stationService.setJurisdiction(stationA);
         Assert.assertEquals(bureauA.getId(), stationA.getJurisdictionBureauId());
         Assert.assertEquals(trainlineDeportA.getId(), stationA.getJurisdictionTdId());
 
         Station stationB = new Station();
-        stationB.setId(4);
         stationB.setAnchorPointsString("110@110");
         stationService.setJurisdiction(stationB);
         Assert.assertEquals(bureauB.getId(), stationB.getJurisdictionBureauId());
         Assert.assertEquals(trainlineDeportB.getId(), stationB.getJurisdictionTdId());
 
         Station stationC = new Station();
-        stationC.setId(5);
         stationC.setAnchorPointsString("300@300");
         stationService.setJurisdiction(stationC);
         Assert.assertNotEquals(bureauA.getId(), stationC.getJurisdictionBureauId());
@@ -429,16 +383,16 @@ public class TestStationService {
 
     @Test
     public void testAddOne() {
-        //委托StationDao
+        //委托Dao
     }
 
     @Test
     public void testUpdateOne() {
-        //委托StationDao
+        //委托Dao
     }
 
     @Test
     public void testDeleteOne() {
-        //委托StationDao
+        //委托Dao
     }
 }

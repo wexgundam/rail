@@ -17,6 +17,7 @@ import org.junit.runners.Suite;
         com.critc.network.service.TestGridService.class,
         com.critc.network.service.TestJts.class,
         com.critc.rail.dao.TestBureauDao.class,
+        com.critc.rail.dao.TestLinkDao.class,
         com.critc.rail.dao.TestStationDao.class,
         com.critc.rail.dao.TestTrainlineDeportDao.class,
         com.critc.rail.dao.TestYardDao.class,
