@@ -451,7 +451,7 @@ public class TrainlineDeportService {
      *
      * @author 靳磊 created on 2019/9/11
      */
-    public void setJurisdictionBureau(TrainlineDeport trainlineDeport) {
+    public void setJurisdiction(TrainlineDeport trainlineDeport) {
         Bureau jurisdictionBureau = bureauService.getJurisdiction(trainlineDeport);
         if (jurisdictionBureau != null) {
             trainlineDeport.setJurisdictionBureauId(jurisdictionBureau.getId());

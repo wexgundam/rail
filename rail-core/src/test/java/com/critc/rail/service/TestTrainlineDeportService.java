@@ -159,19 +159,19 @@ public class TestTrainlineDeportService {
 
         TrainlineDeport trainlineDeportA = new TrainlineDeport();
         trainlineDeportA.setAnchorPointsString("80@80;80@100;100@100;100@80");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportA);
+        trainlineDeportService.setJurisdiction(trainlineDeportA);
         trainlineDeportService.addOne(trainlineDeportA);
         TrainlineDeport trainlineDeportB = new TrainlineDeport();
         trainlineDeportB.setAnchorPointsString("100@100;100@150;150@150;150@100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportB);
+        trainlineDeportService.setJurisdiction(trainlineDeportB);
         trainlineDeportService.addOne(trainlineDeportB);
         TrainlineDeport trainlineDeportC = new TrainlineDeport();
         trainlineDeportC.setAnchorPointsString("40@40;40@80;80@80;80@40");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportC);
+        trainlineDeportService.setJurisdiction(trainlineDeportC);
         trainlineDeportService.addOne(trainlineDeportC);
         TrainlineDeport trainlineDeportD = new TrainlineDeport();
         trainlineDeportD.setAnchorPointsString("-100@-100;-100@0;0@0;0@-100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportD);
+        trainlineDeportService.setJurisdiction(trainlineDeportD);
         trainlineDeportService.addOne(trainlineDeportD);
 
         Station stationA = new Station();
@@ -279,19 +279,19 @@ public class TestTrainlineDeportService {
     public void testGetJurisdiction() {
         TrainlineDeport trainlineDeportA = new TrainlineDeport();
         trainlineDeportA.setAnchorPointsString("80@80;80@100;100@100;100@80");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportA);
+        trainlineDeportService.setJurisdiction(trainlineDeportA);
         trainlineDeportService.addOne(trainlineDeportA);
         TrainlineDeport trainlineDeportB = new TrainlineDeport();
         trainlineDeportB.setAnchorPointsString("100@100;100@150;150@150;150@100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportB);
+        trainlineDeportService.setJurisdiction(trainlineDeportB);
         trainlineDeportService.addOne(trainlineDeportB);
         TrainlineDeport trainlineDeportC = new TrainlineDeport();
         trainlineDeportC.setAnchorPointsString("40@40;40@80;80@80;80@40");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportC);
+        trainlineDeportService.setJurisdiction(trainlineDeportC);
         trainlineDeportService.addOne(trainlineDeportC);
         TrainlineDeport trainlineDeportD = new TrainlineDeport();
         trainlineDeportD.setAnchorPointsString("-100@-100;-100@0;0@0;0@-100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportD);
+        trainlineDeportService.setJurisdiction(trainlineDeportD);
         trainlineDeportService.addOne(trainlineDeportD);
 
         Station stationA = new Station();
@@ -331,20 +331,20 @@ public class TestTrainlineDeportService {
 
         TrainlineDeport trainlineDeportA = new TrainlineDeport();
         trainlineDeportA.setAnchorPointsString("80@80;80@100;100@100;100@80");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportA);
+        trainlineDeportService.setJurisdiction(trainlineDeportA);
         Assert.assertEquals(bureauA.getId(), trainlineDeportA.getJurisdictionBureauId());
         trainlineDeportService.addOne(trainlineDeportA);
         TrainlineDeport trainlineDeportB = new TrainlineDeport();
         trainlineDeportB.setAnchorPointsString("100@100;100@150;150@150;150@100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportB);
+        trainlineDeportService.setJurisdiction(trainlineDeportB);
         Assert.assertEquals(bureauB.getId(), trainlineDeportB.getJurisdictionBureauId());
         TrainlineDeport trainlineDeportC = new TrainlineDeport();
         trainlineDeportC.setAnchorPointsString("40@40;40@80;80@80;80@40");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportC);
+        trainlineDeportService.setJurisdiction(trainlineDeportC);
         Assert.assertEquals(bureauA.getId(), trainlineDeportC.getJurisdictionBureauId());
         TrainlineDeport trainlineDeportD = new TrainlineDeport();
         trainlineDeportD.setAnchorPointsString("-100@-100;-100@0;0@0;0@-100");
-        trainlineDeportService.setJurisdictionBureau(trainlineDeportD);
+        trainlineDeportService.setJurisdiction(trainlineDeportD);
         Assert.assertNotEquals(bureauA.getId(), trainlineDeportD.getJurisdictionBureauId());
         Assert.assertNotEquals(bureauB.getId(), trainlineDeportD.getJurisdictionBureauId());
     }

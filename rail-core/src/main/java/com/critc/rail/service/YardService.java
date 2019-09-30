@@ -31,8 +31,9 @@ import java.util.concurrent.FutureTask;
  * what:    车场服务. <br/>
  * # 检测给定车场是否邻接给定车站. <br/>
  * # 检测给定车场是否邻接给定车场. <br/>
- * # 按条件查询一组车站. <br/>
- * # 按条件查询一个车站. <br/>
+ * # 按条件查询一组车场. <br/>
+ * # 按条件查询一个车场. <br/>
+ * # 按Id查询一个车场. <br/>
  * # 获取全路车场. <br/>
  * # 获取给定路局管辖的车场. <br/>
  * # 获取给定行车调度台管辖的车场. <br/>
@@ -160,6 +161,7 @@ public class YardService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<Yard> getMany(Bureau bureau) {
+        //查询路局管辖的车站集合，再查询每个站管辖的车场集合
         return getMany(stationService.getMany(bureau));
 
     }
@@ -173,6 +175,7 @@ public class YardService {
      * @author 靳磊 created on 2019/9/11
      */
     public List<Yard> getMany(TrainlineDeport trainlineDeport) {
+        //查询行车调度台管辖的车站集合，再查询每个站管辖的车场集合
         return getMany(stationService.getMany(trainlineDeport));
     }
 
@@ -273,7 +276,7 @@ public class YardService {
 
     /**
      * what:    获取给定节点间的邻接车场. <br/>
-     * 通过gridService实现. <br/>
+     * 遍历车场集合，获取与给定节点间邻接的所有车场. <br/>
      * when:    (这里描述这个类的适用时机 – 可选).<br/>
      * how:     (这里描述这个类的使用方法 – 可选).<br/>
      * warning: (这里描述这个类的注意事项 – 可选).<br/>
@@ -362,12 +365,20 @@ public class YardService {
         for (Link link : linkService.getMany(yard)) {
             //获得每个节点间邻接的车场
             AdjoinYards adjoinYards = getAdjoinYards(link);
-            //调换yardA和yardB的位置，使得yardA为给定的yard
+
+            //如果该link的另一端是null，则不符合要求，跳过
+            if (adjoinYards.getYardB() == null) {
+                continue;
+            }
+
+
+            //如果yardA不是目标yard，调换yardA和yardB的位置，使得yardA为给定的yard
             if (!yard.equals(adjoinYards.getYardA())) {
                 adjoinYards.setYardB(adjoinYards.getYardA());
                 adjoinYards.setYardA(yard);
             }
             adjoinYardses.add(adjoinYards);
+
         }
         return adjoinYardses;
     }
