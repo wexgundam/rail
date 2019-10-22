@@ -17,7 +17,6 @@ import com.critc.tile.modal.TileBounds;
 import com.critc.tile.modal.VectorTileSystem;
 import com.critc.tile.modal.View;
 import com.critc.tile.vo.FeaturesVo;
-import com.critc.tile.vo.LineStringVo;
 import com.critc.tile.vo.PointVo;
 import com.critc.tile.vo.TextVo;
 import com.critc.util.json.JsonUtil;
@@ -90,7 +89,7 @@ public class RailController {
     }
 
     @RequestMapping(value = "/features")
-    public void getFeatures(@RequestParam(value = "zoom-level") final Integer zoomLevel,
+    public void getFeatures(@RequestParam(value = "current-zoom-level") final Integer currentZoomLevel,
                             @RequestParam(value = "view-width") final Double viewWidth,
                             @RequestParam(value = "view-height") final Double viewHeight,
                             @RequestParam(value = "view-center-view-coordinate-delta-x") final Double viewCenterViewCoordinateDeltaX,
@@ -101,16 +100,14 @@ public class RailController {
                             @RequestParam(value = "lock-zoom-locked-view-coordinate-x", required = false) final Double lockZoomLockedViewCoordinateX,
                             @RequestParam(value = "lock-zoom-locked-view-coordinate-y", required = false) final Double lockZoomLockedViewCoordinateY,
                             HttpServletResponse response) {
-        FeaturesVo featuresVo = new FeaturesVo();
-        featuresVo.setZoomLevel(zoomLevel);
         View view = new View(viewWidth, viewHeight);
         VectorTileSystem vectorTileSystem = new VectorTileSystem();
         vectorTileSystem.setFigure(getFigure());
         vectorTileSystem.setView(view);
-        vectorTileSystem.setZoomLevel(zoomLevel);
+        vectorTileSystem.setZoomLevel(currentZoomLevel);
         vectorTileSystem.setViewCenterAsFigureCenter();
         Figure figure = vectorTileSystem.getFigure();
-        Projection projection = vectorTileSystem.getProjection(zoomLevel);
+        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
 
         Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
 
@@ -129,6 +126,9 @@ public class RailController {
         Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
 
         Coordinate coordinate5 = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, figure.getCenterCoordinate());
+
+        FeaturesVo featuresVo = new FeaturesVo();
+        featuresVo.setZoomLevel(vectorTileSystem.getZoomLevel());
         featuresVo.setViewCenterViewCoordinateDeltaX(coordinate5.getX() - view.getBounds().getCenterCoordinate().getX());
         featuresVo.setViewCenterViewCoordinateDeltaY(coordinate5.getY() - view.getBounds().getCenterCoordinate().getY());
 
