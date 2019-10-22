@@ -72,7 +72,7 @@
                     view.currentZoomLevel += view.lockZoomZoomDelta;
                 }
 
-                load(view);
+                load(stage, view);
             }
 
             stage.update();
@@ -108,7 +108,6 @@
             }
         };
         StageListener.prototype.mouseWheel = function (e) {
-            newZoomLevel = e.wheelDelta < 0 ? -1 : 1;
             this.view.lockZoomZoomDelta = e.wheelDelta < 0 ? -1 : 1;
             this.view.lockZoomLockedViewCoordinateX = e.offsetX;
             this.view.lockZoomLockedViewCoordinateY = e.offsetY;
@@ -163,11 +162,11 @@
             view.toLoad = true;
         });
 
-        function load(view) {
+        function load(stage, view) {
             var url = 'http://localhost:8092/rail/features.htm?';
-            url += 'zoom-level=' + view.currentZoomLevel;
-            url += '&view-width=' + canvas.width;
-            url += '&view-height=' + canvas.height;
+            url += 'current-zoom-level=' + view.currentZoomLevel;
+            url += '&view-width=' + view.width;
+            url += '&view-height=' + view.height;
             url += '&view-center-view-coordinate-delta-x=' + view.viewCenterViewCoordinateDeltaX;
             url += '&view-center-view-coordinate-delta-y=' + view.viewCenterViewCoordinateDeltaY;
             url += '&lock-zoom=' + view.lockZoom;
@@ -191,14 +190,15 @@
                         view.viewCenterViewCoordinateDeltaY = result.data.viewCenterViewCoordinateDeltaY;
                         view.lockZoom = false;
 
-                        paint(result);
+                        paint(stage, result);
+
+                        view.toLoad = false;
                     }
                 }
             });
-
         }
 
-        function paint(result) {
+        function paint(stage, result) {
             var radios = 3;
             for (var index = 0; index < result.data.points.length; index++) {
                 var nodePointShape = new createjs.Shape();
