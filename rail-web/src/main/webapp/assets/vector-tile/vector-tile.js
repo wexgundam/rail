@@ -7,35 +7,33 @@
  * @type {Object}
  */
 function View() {
-//关联stage
+    //关联stage
     this.stage = null;
-//视图范围宽
+    //视图范围宽
     this.width = 0;
-//视图范围高
+    //视图范围高
     this.height = 0;
-//当前缩放等级0
+    //当前缩放等级0
     this.currentZoomLevel = 0;
-//缩放等级变化量
+    //缩放等级变化量
     this.zoomLevelDelta = 0;
-//最小缩放等级0
+    //最小缩放等级0
     this.minZoomLevel = 0;
-//最大缩放等级10
+    //最大缩放等级10
     this.maxZoomLevel = 0;
-//实际图中心点的视图坐标的横向偏移量
+    //实际图中心点的视图坐标的横向偏移量
     this.viewCenterViewCoordinateDeltaX = 0;
-//实际图中心点的视图坐标的纵向偏移量
+    //实际图中心点的视图坐标的纵向偏移量
     this.viewCenterViewCoordinateDeltaY = 0;
-//是否是缩放锁定
+    //是否是缩放锁定
     this.lockZoom = false;
-//缩放锁定缩放等级增减幅度
-    this.lockZoomZoomDelta = 0;
-//缩放锁定目标缩放等级0
+    //缩放锁定目标缩放等级0
     this.lockZoomPreviousZoomLevel = 0;
-//缩放时锁定的视图坐标的横坐标，默认为视图中心点
+    //缩放时锁定的视图坐标的横坐标，默认为视图中心点
     this.lockZoomLockedViewCoordinateX = 0;
-//缩放时锁定的视图坐标的纵坐标
+    //缩放时锁定的视图坐标的纵坐标
     this.lockZoomLockedViewCoordinateY = 0;
-//视图加载类型：0：不加载；1：初始化加载；2：平移加载；3：无锁缩放加载；4有锁缩放加载。默认初始化加载
+    //视图加载类型：0：不加载；1：初始化加载；2：平移加载；3：无锁缩放加载；4有锁缩放加载。默认初始化加载
     this.loadType = 0;
 };
 
@@ -69,7 +67,7 @@ View.prototype.load = function () {
         }
     } else if (4 == this.loadType) {//有锁缩放
         var newZoomLevel = Math.min(
-            Math.max(this.minZoomLevel, this.currentZoomLevel + this.lockZoomZoomDelta), this.maxZoomLevel);
+            Math.max(this.minZoomLevel, this.currentZoomLevel + this.zoomLevelDelta), this.maxZoomLevel);
         if (this.currentZoomLevel != newZoomLevel) {
             this.lockZoomPreviousZoomLevel = this.currentZoomLevel;
             this.currentZoomLevel = newZoomLevel;
@@ -114,7 +112,7 @@ ActionHandler.prototype.mouseMove = function (e) {
     }
 };
 ActionHandler.prototype.mouseWheel = function (e) {
-    this.view.lockZoomZoomDelta = e.wheelDelta < 0 ? -1 : 1;
+    this.view.zoomLevelDelta = e.wheelDelta < 0 ? -1 : 1;
     this.view.lockZoomLockedViewCoordinateX = e.offsetX;
     this.view.lockZoomLockedViewCoordinateY = e.offsetY;
     this.view.lockZoom = true;

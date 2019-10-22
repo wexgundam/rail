@@ -94,9 +94,8 @@ public class RailController {
                             @RequestParam(value = "view-height") final Double viewHeight,
                             @RequestParam(value = "view-center-view-coordinate-delta-x") final Double viewCenterViewCoordinateDeltaX,
                             @RequestParam(value = "view-center-view-coordinate-delta-y") final Double viewCenterViewCoordinateDeltaY,
-                            @RequestParam(value = "lock-zoom", required = false, defaultValue = "false") final Boolean lockZoom,
+                            @RequestParam(value = "lock-zoom", required = false) final Boolean lockZoom,
                             @RequestParam(value = "lock-zoom-previous-zoom-level", required = false) final Integer lockZoomPreviousZoomLevel,
-                            @RequestParam(value = "lock-zoom-zoom-delta=", required = false) final Integer lockZoomZoomDelta,
                             @RequestParam(value = "lock-zoom-locked-view-coordinate-x", required = false) final Double lockZoomLockedViewCoordinateX,
                             @RequestParam(value = "lock-zoom-locked-view-coordinate-y", required = false) final Double lockZoomLockedViewCoordinateY,
                             HttpServletResponse response) {
@@ -112,7 +111,7 @@ public class RailController {
         Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
 
         vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate0.getX(), -coordinate0.getY()));
-        if (lockZoom) {
+        if (lockZoom != null) {
             Projection preViousProjection = vectorTileSystem.getProjection(lockZoomPreviousZoomLevel);
 
             Coordinate coordinate01 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);

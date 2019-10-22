@@ -101,10 +101,9 @@
             url += '&view-height=' + view.height;
             url += '&view-center-view-coordinate-delta-x=' + view.viewCenterViewCoordinateDeltaX;
             url += '&view-center-view-coordinate-delta-y=' + view.viewCenterViewCoordinateDeltaY;
-            url += '&lock-zoom=' + view.lockZoom;
             if (view.lockZoom) {
+                url += '&lock-zoom=' + view.lockZoom;
                 url += '&lock-zoom-previous-zoom-level=' + view.lockZoomPreviousZoomLevel;
-                url += '&lock-zoom-zoom-delta=' + view.lockZoomZoomDelta;
                 url += '&lock-zoom-locked-view-coordinate-x=' + view.lockZoomLockedViewCoordinateX;
                 url += '&lock-zoom-locked-view-coordinate-y=' + view.lockZoomLockedViewCoordinateY;
             }
