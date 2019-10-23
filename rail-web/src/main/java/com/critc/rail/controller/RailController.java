@@ -131,6 +131,8 @@ public class RailController {
 
         FeaturesVo featuresVo = new FeaturesVo();
         featuresVo.setZoomLevel(vectorTileSystem.getZoomLevel());
+        featuresVo.setMinZoomLevel(vectorTileSystem.getMinZoomLevel());
+        featuresVo.setMaxZoomLevel(vectorTileSystem.getMaxZoomLevel());
         featuresVo.setViewCenterViewCoordinateDeltaX(coordinate5.getX() - view.getBounds().getCenterCoordinate().getX());
         featuresVo.setViewCenterViewCoordinateDeltaY(coordinate5.getY() - view.getBounds().getCenterCoordinate().getY());
 
@@ -178,24 +180,6 @@ public class RailController {
         textVo.setX(pointVo.getX() + 5);
         textVo.setY(pointVo.getY());
         featuresVo.getTexts().add(textVo);
-
-//        for (LineView lineView : getLineViews()) {
-//            TileBounds lineViewTileBounds = getTileBounds(figure, projection, lineView);
-//            if (lineViewTileBounds.getTopLeftTile().getRow() > tileBounds.getBottomRightTile().getRow()
-//                    || lineViewTileBounds.getBottomRightTile().getRow() < tileBounds.getTopLeftTile().getRow()
-//                    || lineViewTileBounds.getTopLeftTile().getColumn() > tileBounds.getBottomRightTile().getColumn()
-//                    || lineViewTileBounds.getBottomRightTile().getColumn() < tileBounds.getTopLeftTile().getColumn()
-//                    ) {
-//                continue;
-//            }
-//
-//            LineStringVo lineStringVo = new LineStringVo();
-//            Coordinate sourceViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getSourceX(), lineView.getSourceY());
-//            Coordinate targetViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getTargetX(), lineView.getTargetY());
-//            double[] xys = new double[]{sourceViewCoordinate.getX(), sourceViewCoordinate.getY(), targetViewCoordinate.getX(), targetViewCoordinate.getY()};
-//            lineStringVo.setXys(xys);
-//            featuresVo.getLineStrings().add(lineStringVo);
-//        }
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("success", true);

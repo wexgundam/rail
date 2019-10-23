@@ -113,14 +113,14 @@
                     if (result["success"]) {
                         //获取缩放等级
                         view.zoomLevel = result.data.zoomLevel;
+                        //最小缩放等级
+                        view.minZoomLevel = result.data.minZoomLevel;
+                        //最大缩放等级
+                        view.maxZoomLevel = result.data.maxZoomLevel;
                         //获取视同中心点视图坐标偏移量x
                         view.viewCenterViewCoordinateDeltaX = result.data.viewCenterViewCoordinateDeltaX;
                         //获取视同中心点视图坐标偏移量y
                         view.viewCenterViewCoordinateDeltaY = result.data.viewCenterViewCoordinateDeltaY;
-                        //最小缩放等级0
-                        view.minZoomLevel = 0;
-                        //最大缩放等级10
-                        view.maxZoomLevel = 10;
 
                         view.clearShapes();
 
