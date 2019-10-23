@@ -17,6 +17,7 @@ import com.critc.tile.modal.TileBounds;
 import com.critc.tile.modal.VectorTileSystem;
 import com.critc.tile.modal.View;
 import com.critc.tile.vo.FeaturesVo;
+import com.critc.tile.vo.LineStringVo;
 import com.critc.tile.vo.PointVo;
 import com.critc.tile.vo.TextVo;
 import com.critc.util.json.JsonUtil;
@@ -119,43 +120,48 @@ public class RailController {
         vectorTileSystem.setView(view);
         //设置显示方的缩放比例
         vectorTileSystem.setZoomLevel(zoomLevel);
-        //设置显示方的实际图中心点的显示坐标
+        Figure figure = vectorTileSystem.getFigure();
+
+        ////////////根据显示方现有参数计算视图中心的实际图坐标////////////
+        //显示方当前缩放等级对应的透视图
+        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
+        //计算显示方实际图中心点的视图坐标
         double figureCenterViewCoordinateX = view.getBounds().getCenterCoordinate().getX() + figureCenterViewCoordinateDeltaX;
         double figureCenterViewCoordinateY = view.getBounds().getCenterCoordinate().getY() + figureCenterViewCoordinateDeltaY;
+        //显示方前次缩放等级对应的透视图
+        Projection previousProjection = vectorTileSystem.getProjection(previousZoomLevel);
+        //如果视图中心点实际图坐标为实际图中心点时，计算缩放前显示方实际图中心点的视图坐标对应的实际图坐标
+        Coordinate previousFigureCenterFigureCoordinate = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, previousProjection, figure.getCenterCoordinate(), figureCenterViewCoordinateX, figureCenterViewCoordinateY);
+        double previousViewCenterFigureCoordinateX = figure.getCenterCoordinate().getX() - (previousFigureCenterFigureCoordinate.getX() - figure.getCenterCoordinate().getX());
+        double previousViewCenterFigureCoordinateY = figure.getCenterCoordinate().getY() - (previousFigureCenterFigureCoordinate.getY() - figure.getCenterCoordinate().getY());
+        Coordinate previousViewCenterFigureCoordinate = new Coordinate(previousViewCenterFigureCoordinateX, previousViewCenterFigureCoordinateY);
 
+        //显示方锁定锁定点的视图坐标
+        double lockedViewCoordinateX = lockedViewCoordinateDeltaX + viewWidth / 2;
+        double lockedViewCoordinateY = lockedViewCoordinateDeltaY + viewHeight / 2;
 
-        Figure figure = vectorTileSystem.getFigure();
-        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
+        //如果视图中心点对应的实际图坐标不变，计算显示方视图锁定点在前次缩放和本次缩放时对应的实际图坐标
+        Coordinate previousLockedViewCoordinateFigureGCoordinate = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, previousProjection, previousViewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
+        Coordinate lockedViewCoordinateFigureGCoordinate = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, previousViewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
 
-        Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), figureCenterViewCoordinateX, figureCenterViewCoordinateY);
+        //如果视图锁定点代表的实际图坐标不变，计算视图中心点对应的视图坐标
+        double viewCenterFigureCoordinateX = previousViewCenterFigureCoordinate.getX() + previousLockedViewCoordinateFigureGCoordinate.getX() - lockedViewCoordinateFigureGCoordinate.getX();
+        double viewCenterFigureCoordinateY = previousViewCenterFigureCoordinate.getY() + previousLockedViewCoordinateFigureGCoordinate.getY() - lockedViewCoordinateFigureGCoordinate.getY();
+        vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(viewCenterFigureCoordinateX, viewCenterFigureCoordinateY));
 
-        vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate0.getX(), -coordinate0.getY()));
-        if (true) {
-            double lockedViewCoordinateX = lockedViewCoordinateDeltaX + +viewWidth / 2;
-            double lockedViewCoordinateY = lockedViewCoordinateDeltaY + +viewHeight / 2;
-
-
-            Projection preViousProjection = vectorTileSystem.getProjection(previousZoomLevel);
-
-            Coordinate coordinate01 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + figureCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + figureCenterViewCoordinateDeltaY);
-            vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate01.getX(), -coordinate01.getY()));
-            Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
-
-            Coordinate coordinate1 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, viewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
-            Coordinate coordinate2 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, viewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
-            vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(viewCenterFigureCoordinate.getX() + coordinate1.getX() - coordinate2.getX(), viewCenterFigureCoordinate.getY() + coordinate1.getY() - coordinate2.getY()));
-        }
+        //计算实际图中心点的视图图坐标
         Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
+        Coordinate figureCenterViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, figure.getCenterCoordinate());
 
-        Coordinate coordinate5 = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, figure.getCenterCoordinate());
-
+        //生成返回的数据包
         FeaturesVo featuresVo = new FeaturesVo();
         featuresVo.setZoomLevel(vectorTileSystem.getZoomLevel());
         featuresVo.setMinZoomLevel(vectorTileSystem.getMinZoomLevel());
         featuresVo.setMaxZoomLevel(vectorTileSystem.getMaxZoomLevel());
-        featuresVo.setFigureCenterViewCoordinateDeltaX(coordinate5.getX() - view.getBounds().getCenterCoordinate().getX());
-        featuresVo.setFigureCenterViewCoordinateDeltaY(coordinate5.getY() - view.getBounds().getCenterCoordinate().getY());
+        featuresVo.setFigureCenterViewCoordinateDeltaX(figureCenterViewCoordinate.getX() - view.getBounds().getCenterCoordinate().getX());
+        featuresVo.setFigureCenterViewCoordinateDeltaY(figureCenterViewCoordinate.getY() - view.getBounds().getCenterCoordinate().getY());
 
+        //计算当前视图的瓦片范围
         TileBounds tileBounds = coordinateSystem.viewBoundsToTileBounds(figure, view, projection, viewCenterFigureCoordinate, view.getBounds());
 
         for (NodeView nodeView : getNodeViews()) {
@@ -177,7 +183,7 @@ public class RailController {
             textVo.setText(nodeView.getName());
             textVo.setX(viewCoordinate.getX() + 5);
             textVo.setY(viewCoordinate.getY());
-//            featuresVo.getTexts().add(textVo);
+            featuresVo.getTexts().add(textVo);
         }
 
         PointVo pointVo = new PointVo();
@@ -200,6 +206,24 @@ public class RailController {
         textVo.setX(pointVo.getX() + 5);
         textVo.setY(pointVo.getY());
         featuresVo.getTexts().add(textVo);
+
+        for (LineView lineView : getLineViews()) {
+            TileBounds lineViewTileBounds = getTileBounds(figure, projection, lineView);
+            if (lineViewTileBounds.getTopLeftTile().getRow() > tileBounds.getBottomRightTile().getRow()
+                    || lineViewTileBounds.getBottomRightTile().getRow() < tileBounds.getTopLeftTile().getRow()
+                    || lineViewTileBounds.getTopLeftTile().getColumn() > tileBounds.getBottomRightTile().getColumn()
+                    || lineViewTileBounds.getBottomRightTile().getColumn() < tileBounds.getTopLeftTile().getColumn()
+                    ) {
+                continue;
+            }
+
+            LineStringVo lineStringVo = new LineStringVo();
+            Coordinate sourceViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getSourceX(), lineView.getSourceY());
+            Coordinate targetViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getTargetX(), lineView.getTargetY());
+            double[] xys = new double[]{sourceViewCoordinate.getX(), sourceViewCoordinate.getY(), targetViewCoordinate.getX(), targetViewCoordinate.getY()};
+            lineStringVo.setXys(xys);
+            featuresVo.getLineStrings().add(lineStringVo);
+        }
 
         ModelMap modelMap = new ModelMap();
         modelMap.put("success", true);
@@ -227,52 +251,4 @@ public class RailController {
 
         return coordinateSystem.figureBoundsToTileBounds(figure, projection, bounds);
     }
-
-//    private FeaturesVo getFeatures(int zoomLevel) {
-//        Projection projection = new Projection(figure.getBounds(), zoomLevel, tileSize);
-//        GeometrySystem geometrySystem = new GeometrySystem();
-//        TileBounds tileBounds = geometrySystem.getTileBounds(figure, projection, feature.getGeometry());
-//        for (int column = tileBounds.getTopLeftTile().getColumn(); column <= tileBounds.getBottomRightTile().getColumn(); column++) {
-//            for (int row = tileBounds.getTopLeftTile().getRow(); row <= tileBounds.getBottomRightTile().getRow(); row++) {
-//                Tile tile = new Tile(zoomLevel, column, row);
-//
-//                featurePackage.getFeatureTiles(feature).getTiles().add(tile);
-//                featurePackage.getTileFeatures(tile).getFeatures().add(feature);
-//            }
-//        }
-//
-//        FeaturesVo featuresVo = new FeaturesVo();
-//        for (NodeView lineView : getNodeViews()) {
-//            coordinateSystem.fi
-//            PointVo pointVo = new PointVo();
-//            pointVo.setX();
-//        }
-//        return null;
-//    }
-
-
-//    @RequestMapping(value = "/features")
-//    public void getFeatures(HttpServletRequest request, HttpServletResponse response) {
-//        FeaturesVo features = featureService.getFeatures(tileSize, minZoomLevel, maxZoomLevel);
-//
-//        ModelMap modelMap = new ModelMap();
-//        modelMap.put("success", true);
-//        modelMap.put("data", features);
-//        String json = JsonUtil.toStr(modelMap);
-//        WebUtil.out(response, json);
-//
-//        (function () {
-//            $.ajax({
-//                    type: 'GET',
-//                    url: 'http://localhost:8092/rail/features.htm',
-//                    dataType: 'json',
-//                    success: function (result) {
-//                if (result["success"]) {
-//                    console.log(result);
-//                }
-//            }
-//
-//        });
-//        })();
-//    }
 }

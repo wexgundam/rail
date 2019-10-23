@@ -25,7 +25,7 @@ function View() {
     this.figureCenterViewCoordinateDeltaX = 0;
     //实际图中心点的视图坐标的纵向偏移量
     this.figureCenterViewCoordinateDeltaY = 0;
-    //缩放锁定目标缩放等级0
+    //缩放锁定前缩放等级0
     this.previousZoomLevel = 0;
     //缩放时锁定的视图坐标的横坐标，默认为视图中心点
     this.lockedViewCoordinateDeltaX = 0;
