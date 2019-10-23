@@ -16,7 +16,21 @@ public class FeaturesVo {
      * 缩放等级
      */
     private int zoomLevel;
+    /**
+     * 最小缩放等级
+     */
+    private int minZoomLevel;
+    /**
+     * 最大缩放等级
+     */
+    private int maxZoomLevel;
+    /**
+     * 实际图中心坐标点的视图坐标在显示时的偏移量
+     */
     private double viewCenterViewCoordinateDeltaX;
+    /**
+     * 实际图中心坐标点的视图坐标在显示时的偏移量
+     */
     private double viewCenterViewCoordinateDeltaY;
     /**
      * 点类图形集合
@@ -34,6 +48,22 @@ public class FeaturesVo {
      * 多边形类图形集合
      */
     private List<PolygonVo> polygonVos;
+
+    public int getMinZoomLevel() {
+        return minZoomLevel;
+    }
+
+    public void setMinZoomLevel(int minZoomLevel) {
+        this.minZoomLevel = minZoomLevel;
+    }
+
+    public int getMaxZoomLevel() {
+        return maxZoomLevel;
+    }
+
+    public void setMaxZoomLevel(int maxZoomLevel) {
+        this.maxZoomLevel = maxZoomLevel;
+    }
 
     public double getViewCenterViewCoordinateDeltaX() {
         return viewCenterViewCoordinateDeltaX;
