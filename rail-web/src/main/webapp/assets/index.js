@@ -96,17 +96,14 @@
 
         var doLoad = function (view) {
             var url = 'http://localhost:8092/rail/features.htm?';
-            url += 'current-zoom-level=' + view.currentZoomLevel;
+            url += 'zoom-level=' + view.zoomLevel;
             url += '&view-width=' + view.width;
             url += '&view-height=' + view.height;
             url += '&view-center-view-coordinate-delta-x=' + view.viewCenterViewCoordinateDeltaX;
             url += '&view-center-view-coordinate-delta-y=' + view.viewCenterViewCoordinateDeltaY;
-            if (view.lockZoom) {
-                url += '&lock-zoom=' + view.lockZoom;
-                url += '&lock-zoom-previous-zoom-level=' + view.lockZoomPreviousZoomLevel;
-                url += '&lock-zoom-locked-view-coordinate-x=' + view.lockZoomLockedViewCoordinateX;
-                url += '&lock-zoom-locked-view-coordinate-y=' + view.lockZoomLockedViewCoordinateY;
-            }
+            url += '&locked-view-coordinate-delta-x=' + view.lockedViewCoordinateDeltaX;
+            url += '&locked-view-coordinate-delta-y=' + view.lockedViewCoordinateDeltaY;
+            url += '&previous-zoom-level=' + view.previousZoomLevel;
 
             $.ajax({
                 type: 'GET',
@@ -114,10 +111,16 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result["success"]) {
-                        view.currentZoomLevel = result.data.zoomLevel;
+                        //获取缩放等级
+                        view.zoomLevel = result.data.zoomLevel;
+                        //获取视同中心点视图坐标偏移量x
                         view.viewCenterViewCoordinateDeltaX = result.data.viewCenterViewCoordinateDeltaX;
+                        //获取视同中心点视图坐标偏移量y
                         view.viewCenterViewCoordinateDeltaY = result.data.viewCenterViewCoordinateDeltaY;
-                        view.lockZoom = false;
+                        //最小缩放等级0
+                        view.minZoomLevel = 0;
+                        //最大缩放等级10
+                        view.maxZoomLevel = 10;
 
                         view.clearShapes();
 
@@ -136,7 +139,7 @@
                     }
                 }
             });
-        }
+        };
 
         //初始化canvas尺寸
         //必须通过这个方法设置canvas画板尺寸，其他方式只是设置css显示尺寸
@@ -155,10 +158,7 @@
         vectorTile.canvasId = "vectorTileCanvas";
         vectorTile.canvasWidth = canvas.width;
         vectorTile.canvasHeight = canvas.height;
-
         vectorTile.initialize();
-
-        vectorTile.view.doLoad = doLoad;
 
         canvas.addEventListener("mousedown", function (e) {
             vectorTile.actionHandler.mouseDown(e);
@@ -197,6 +197,9 @@
         $("#load").on("click", function (e) {
             vectorTile.actionHandler.moveCenter(e);
         });
+
+        vectorTile.view.doLoad = doLoad;
+        vectorTile.view.zoomLevel = 1;
 
         vectorTile.startUp();
     });

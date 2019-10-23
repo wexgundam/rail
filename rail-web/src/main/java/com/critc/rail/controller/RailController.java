@@ -89,21 +89,20 @@ public class RailController {
     }
 
     @RequestMapping(value = "/features")
-    public void getFeatures(@RequestParam(value = "current-zoom-level") final Integer currentZoomLevel,
-                            @RequestParam(value = "view-width") final Double viewWidth,
-                            @RequestParam(value = "view-height") final Double viewHeight,
-                            @RequestParam(value = "view-center-view-coordinate-delta-x") final Double viewCenterViewCoordinateDeltaX,
-                            @RequestParam(value = "view-center-view-coordinate-delta-y") final Double viewCenterViewCoordinateDeltaY,
-                            @RequestParam(value = "lock-zoom", required = false) final Boolean lockZoom,
-                            @RequestParam(value = "lock-zoom-previous-zoom-level", required = false) final Integer lockZoomPreviousZoomLevel,
-                            @RequestParam(value = "lock-zoom-locked-view-coordinate-x", required = false) final Double lockZoomLockedViewCoordinateX,
-                            @RequestParam(value = "lock-zoom-locked-view-coordinate-y", required = false) final Double lockZoomLockedViewCoordinateY,
+    public void getFeatures(@RequestParam(value = "zoom-level") Integer zoomLevel,
+                            @RequestParam(value = "view-width") Double viewWidth,
+                            @RequestParam(value = "view-height") Double viewHeight,
+                            @RequestParam(value = "view-center-view-coordinate-delta-x") Double viewCenterViewCoordinateDeltaX,
+                            @RequestParam(value = "view-center-view-coordinate-delta-y") Double viewCenterViewCoordinateDeltaY,
+                            @RequestParam(value = "locked-view-coordinate-delta-x") Double lockedViewCoordinateDeltaX,
+                            @RequestParam(value = "locked-view-coordinate-delta-y") Double lockedViewCoordinateDeltaY,
+                            @RequestParam(value = "previous-zoom-level", required = false) Integer previousZoomLevel,
                             HttpServletResponse response) {
         View view = new View(viewWidth, viewHeight);
         VectorTileSystem vectorTileSystem = new VectorTileSystem();
         vectorTileSystem.setFigure(getFigure());
         vectorTileSystem.setView(view);
-        vectorTileSystem.setZoomLevel(currentZoomLevel);
+        vectorTileSystem.setZoomLevel(zoomLevel);
         vectorTileSystem.setViewCenterAsFigureCenter();
         Figure figure = vectorTileSystem.getFigure();
         Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
@@ -111,15 +110,19 @@ public class RailController {
         Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
 
         vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate0.getX(), -coordinate0.getY()));
-        if (lockZoom != null) {
-            Projection preViousProjection = vectorTileSystem.getProjection(lockZoomPreviousZoomLevel);
+        if (true) {
+            double lockedViewCoordinateX = lockedViewCoordinateDeltaX + +viewWidth / 2;
+            double lockedViewCoordinateY = lockedViewCoordinateDeltaY + +viewHeight / 2;
+
+
+            Projection preViousProjection = vectorTileSystem.getProjection(previousZoomLevel);
 
             Coordinate coordinate01 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
             vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate01.getX(), -coordinate01.getY()));
             Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
 
-            Coordinate coordinate1 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, viewCenterFigureCoordinate, lockZoomLockedViewCoordinateX, lockZoomLockedViewCoordinateY);
-            Coordinate coordinate2 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, viewCenterFigureCoordinate, lockZoomLockedViewCoordinateX, lockZoomLockedViewCoordinateY);
+            Coordinate coordinate1 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, viewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
+            Coordinate coordinate2 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, viewCenterFigureCoordinate, lockedViewCoordinateX, lockedViewCoordinateY);
             vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(viewCenterFigureCoordinate.getX() + coordinate1.getX() - coordinate2.getX(), viewCenterFigureCoordinate.getY() + coordinate1.getY() - coordinate2.getY()));
         }
         Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
@@ -221,13 +224,13 @@ public class RailController {
         return coordinateSystem.figureBoundsToTileBounds(figure, projection, bounds);
     }
 
-//    private FeaturesVo getFeatures(int currentZoomLevel) {
-//        Projection projection = new Projection(figure.getBounds(), currentZoomLevel, tileSize);
+//    private FeaturesVo getFeatures(int zoomLevel) {
+//        Projection projection = new Projection(figure.getBounds(), zoomLevel, tileSize);
 //        GeometrySystem geometrySystem = new GeometrySystem();
 //        TileBounds tileBounds = geometrySystem.getTileBounds(figure, projection, feature.getGeometry());
 //        for (int column = tileBounds.getTopLeftTile().getColumn(); column <= tileBounds.getBottomRightTile().getColumn(); column++) {
 //            for (int row = tileBounds.getTopLeftTile().getRow(); row <= tileBounds.getBottomRightTile().getRow(); row++) {
-//                Tile tile = new Tile(currentZoomLevel, column, row);
+//                Tile tile = new Tile(zoomLevel, column, row);
 //
 //                featurePackage.getFeatureTiles(feature).getTiles().add(tile);
 //                featurePackage.getTileFeatures(tile).getFeatures().add(feature);
