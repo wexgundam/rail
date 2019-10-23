@@ -99,8 +99,8 @@
             url += 'zoom-level=' + view.zoomLevel;
             url += '&view-width=' + view.width;
             url += '&view-height=' + view.height;
-            url += '&view-center-view-coordinate-delta-x=' + view.viewCenterViewCoordinateDeltaX;
-            url += '&view-center-view-coordinate-delta-y=' + view.viewCenterViewCoordinateDeltaY;
+            url += '&figure-center-view-coordinate-delta-x=' + view.figureCenterViewCoordinateDeltaX;
+            url += '&figure-center-view-coordinate-delta-y=' + view.figureCenterViewCoordinateDeltaY;
             url += '&locked-view-coordinate-delta-x=' + view.lockedViewCoordinateDeltaX;
             url += '&locked-view-coordinate-delta-y=' + view.lockedViewCoordinateDeltaY;
             url += '&previous-zoom-level=' + view.previousZoomLevel;
@@ -118,9 +118,9 @@
                         //最大缩放等级
                         view.maxZoomLevel = result.data.maxZoomLevel;
                         //获取视同中心点视图坐标偏移量x
-                        view.viewCenterViewCoordinateDeltaX = result.data.viewCenterViewCoordinateDeltaX;
+                        view.figureCenterViewCoordinateDeltaX = result.data.figureCenterViewCoordinateDeltaX;
                         //获取视同中心点视图坐标偏移量y
-                        view.viewCenterViewCoordinateDeltaY = result.data.viewCenterViewCoordinateDeltaY;
+                        view.figureCenterViewCoordinateDeltaY = result.data.figureCenterViewCoordinateDeltaY;
 
                         view.clearShapes();
 

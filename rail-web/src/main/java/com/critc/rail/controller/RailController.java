@@ -88,26 +88,46 @@ public class RailController {
         return figure;
     }
 
+    /**
+     * what:    根据用户请求，返回对应的图形对象. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/10/23
+     */
     @RequestMapping(value = "/features")
     public void getFeatures(@RequestParam(value = "zoom-level") Integer zoomLevel,
                             @RequestParam(value = "view-width") Double viewWidth,
                             @RequestParam(value = "view-height") Double viewHeight,
-                            @RequestParam(value = "view-center-view-coordinate-delta-x") Double viewCenterViewCoordinateDeltaX,
-                            @RequestParam(value = "view-center-view-coordinate-delta-y") Double viewCenterViewCoordinateDeltaY,
+                            @RequestParam(value = "figure-center-view-coordinate-delta-x") Double figureCenterViewCoordinateDeltaX,
+                            @RequestParam(value = "figure-center-view-coordinate-delta-y") Double figureCenterViewCoordinateDeltaY,
                             @RequestParam(value = "locked-view-coordinate-delta-x") Double lockedViewCoordinateDeltaX,
                             @RequestParam(value = "locked-view-coordinate-delta-y") Double lockedViewCoordinateDeltaY,
                             @RequestParam(value = "previous-zoom-level", required = false) Integer previousZoomLevel,
                             HttpServletResponse response) {
-        View view = new View(viewWidth, viewHeight);
+
+        ////////根据请求参数构建请求方的显示环境////////
+
+        //创建瓦片矢量系统对象
         VectorTileSystem vectorTileSystem = new VectorTileSystem();
         vectorTileSystem.setFigure(getFigure());
-        vectorTileSystem.setView(view);
-        vectorTileSystem.setZoomLevel(zoomLevel);
         vectorTileSystem.setViewCenterAsFigureCenter();
+
+        //根据请求方显示数据，创建显示对象
+        View view = new View(viewWidth, viewHeight);
+        vectorTileSystem.setView(view);
+        //设置显示方的缩放比例
+        vectorTileSystem.setZoomLevel(zoomLevel);
+        //设置显示方的实际图中心点的显示坐标
+        double figureCenterViewCoordinateX = view.getBounds().getCenterCoordinate().getX() + figureCenterViewCoordinateDeltaX;
+        double figureCenterViewCoordinateY = view.getBounds().getCenterCoordinate().getY() + figureCenterViewCoordinateDeltaY;
+
+
         Figure figure = vectorTileSystem.getFigure();
         Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
 
-        Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
+        Coordinate coordinate0 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, projection, figure.getCenterCoordinate(), figureCenterViewCoordinateX, figureCenterViewCoordinateY);
 
         vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate0.getX(), -coordinate0.getY()));
         if (true) {
@@ -117,7 +137,7 @@ public class RailController {
 
             Projection preViousProjection = vectorTileSystem.getProjection(previousZoomLevel);
 
-            Coordinate coordinate01 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + viewCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + viewCenterViewCoordinateDeltaY);
+            Coordinate coordinate01 = coordinateSystem.viewCoordinateToFigureCoordinate(figure, view, preViousProjection, figure.getCenterCoordinate(), view.getBounds().getCenterCoordinate().getX() + figureCenterViewCoordinateDeltaX, view.getBounds().getCenterCoordinate().getY() + figureCenterViewCoordinateDeltaY);
             vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(-coordinate01.getX(), -coordinate01.getY()));
             Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
 
@@ -133,8 +153,8 @@ public class RailController {
         featuresVo.setZoomLevel(vectorTileSystem.getZoomLevel());
         featuresVo.setMinZoomLevel(vectorTileSystem.getMinZoomLevel());
         featuresVo.setMaxZoomLevel(vectorTileSystem.getMaxZoomLevel());
-        featuresVo.setViewCenterViewCoordinateDeltaX(coordinate5.getX() - view.getBounds().getCenterCoordinate().getX());
-        featuresVo.setViewCenterViewCoordinateDeltaY(coordinate5.getY() - view.getBounds().getCenterCoordinate().getY());
+        featuresVo.setFigureCenterViewCoordinateDeltaX(coordinate5.getX() - view.getBounds().getCenterCoordinate().getX());
+        featuresVo.setFigureCenterViewCoordinateDeltaY(coordinate5.getY() - view.getBounds().getCenterCoordinate().getY());
 
         TileBounds tileBounds = coordinateSystem.viewBoundsToTileBounds(figure, view, projection, viewCenterFigureCoordinate, view.getBounds());
 

@@ -27,11 +27,11 @@ public class FeaturesVo {
     /**
      * 实际图中心坐标点的视图坐标在显示时的偏移量
      */
-    private double viewCenterViewCoordinateDeltaX;
+    private double figureCenterViewCoordinateDeltaX;
     /**
      * 实际图中心坐标点的视图坐标在显示时的偏移量
      */
-    private double viewCenterViewCoordinateDeltaY;
+    private double figureCenterViewCoordinateDeltaY;
     /**
      * 点类图形集合
      */
@@ -65,20 +65,20 @@ public class FeaturesVo {
         this.maxZoomLevel = maxZoomLevel;
     }
 
-    public double getViewCenterViewCoordinateDeltaX() {
-        return viewCenterViewCoordinateDeltaX;
+    public double getFigureCenterViewCoordinateDeltaX() {
+        return figureCenterViewCoordinateDeltaX;
     }
 
-    public void setViewCenterViewCoordinateDeltaX(double viewCenterViewCoordinateDeltaX) {
-        this.viewCenterViewCoordinateDeltaX = viewCenterViewCoordinateDeltaX;
+    public void setFigureCenterViewCoordinateDeltaX(double figureCenterViewCoordinateDeltaX) {
+        this.figureCenterViewCoordinateDeltaX = figureCenterViewCoordinateDeltaX;
     }
 
-    public double getViewCenterViewCoordinateDeltaY() {
-        return viewCenterViewCoordinateDeltaY;
+    public double getFigureCenterViewCoordinateDeltaY() {
+        return figureCenterViewCoordinateDeltaY;
     }
 
-    public void setViewCenterViewCoordinateDeltaY(double viewCenterViewCoordinateDeltaY) {
-        this.viewCenterViewCoordinateDeltaY = viewCenterViewCoordinateDeltaY;
+    public void setFigureCenterViewCoordinateDeltaY(double figureCenterViewCoordinateDeltaY) {
+        this.figureCenterViewCoordinateDeltaY = figureCenterViewCoordinateDeltaY;
     }
 
     public int getZoomLevel() {

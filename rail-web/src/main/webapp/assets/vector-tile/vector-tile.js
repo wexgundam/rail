@@ -22,9 +22,9 @@ function View() {
     //最大缩放等级10
     this.maxZoomLevel = 0;
     //实际图中心点的视图坐标的横向偏移量
-    this.viewCenterViewCoordinateDeltaX = 0;
+    this.figureCenterViewCoordinateDeltaX = 0;
     //实际图中心点的视图坐标的纵向偏移量
-    this.viewCenterViewCoordinateDeltaY = 0;
+    this.figureCenterViewCoordinateDeltaY = 0;
     //缩放锁定目标缩放等级0
     this.previousZoomLevel = 0;
     //缩放时锁定的视图坐标的横坐标，默认为视图中心点
@@ -91,8 +91,8 @@ ActionHandler.prototype.mouseDown = function (e) {
 };
 ActionHandler.prototype.mouseUp = function (e) {
     this.dragging = false;
-    this.view.viewCenterViewCoordinateDeltaX += e.offsetX - this.dragCoordinateX;
-    this.view.viewCenterViewCoordinateDeltaY += e.offsetY - this.dragCoordinateY;
+    this.view.figureCenterViewCoordinateDeltaX += e.offsetX - this.dragCoordinateX;
+    this.view.figureCenterViewCoordinateDeltaY += e.offsetY - this.dragCoordinateY;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = e.offsetX - this.view.width / 2;
     this.view.lockedViewCoordinateDeltaY = e.offsetY - this.view.height / 2;
@@ -119,36 +119,36 @@ ActionHandler.prototype.zoomOut = function (e) {
     this.view.loadType = 3;
 };
 ActionHandler.prototype.moveUp = function (e) {
-    this.view.viewCenterViewCoordinateDeltaY += -256;
+    this.view.figureCenterViewCoordinateDeltaY += -256;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = 0;
     this.view.lockedViewCoordinateDeltaY = 0;
     this.view.loadType = 2;
 };
 ActionHandler.prototype.moveDown = function (e) {
-    this.view.viewCenterViewCoordinateDeltaY += 256;
+    this.view.figureCenterViewCoordinateDeltaY += 256;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = 0;
     this.view.lockedViewCoordinateDeltaY = 0;
     this.view.loadType = 2;
 };
 ActionHandler.prototype.moveLeft = function (e) {
-    this.view.viewCenterViewCoordinateDeltaX += -256;
+    this.view.figureCenterViewCoordinateDeltaX += -256;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = 0;
     this.view.lockedViewCoordinateDeltaY = 0;
     this.view.loadType = 2;
 };
 ActionHandler.prototype.moveRight = function (e) {
-    this.view.viewCenterViewCoordinateDeltaX += 256;
+    this.view.figureCenterViewCoordinateDeltaX += 256;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = 0;
     this.view.lockedViewCoordinateDeltaY = 0;
     this.view.loadType = 2;
 };
 ActionHandler.prototype.moveCenter = function (e) {
-    this.view.viewCenterViewCoordinateDeltaX = 0;
-    this.view.viewCenterViewCoordinateDeltaY = 0;
+    this.view.figureCenterViewCoordinateDeltaX = 0;
+    this.view.figureCenterViewCoordinateDeltaY = 0;
     this.view.previousZoomLevel = this.view.zoomLevel;
     this.view.lockedViewCoordinateDeltaX = 0;
     this.view.lockedViewCoordinateDeltaY = 0;
