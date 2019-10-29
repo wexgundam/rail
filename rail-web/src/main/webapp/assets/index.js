@@ -97,13 +97,13 @@
         var doLoad = function (view) {
             var url = 'http://localhost:8092/rail/features.htm?';
             url += 'zoom-level=' + view.zoomLevel;
+            url += '&previous-zoom-level=' + view.previousZoomLevel;
             url += '&view-width=' + view.width;
             url += '&view-height=' + view.height;
             url += '&figure-center-view-coordinate-delta-x=' + view.figureCenterViewCoordinateDeltaX;
             url += '&figure-center-view-coordinate-delta-y=' + view.figureCenterViewCoordinateDeltaY;
             url += '&locked-view-coordinate-delta-x=' + view.lockedViewCoordinateDeltaX;
             url += '&locked-view-coordinate-delta-y=' + view.lockedViewCoordinateDeltaY;
-            url += '&previous-zoom-level=' + view.previousZoomLevel;
 
             $.ajax({
                 type: 'GET',

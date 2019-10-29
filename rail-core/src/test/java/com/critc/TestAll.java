@@ -27,6 +27,7 @@ import org.junit.runners.Suite;
         com.critc.rail.service.TestStationService.class,
         com.critc.rail.service.TestTrainlineDeportService.class,
         com.critc.rail.service.TestYardService.class,
+        com.critc.tile.modal.TestTileBounds.class
 })
 public class TestAll {
 
