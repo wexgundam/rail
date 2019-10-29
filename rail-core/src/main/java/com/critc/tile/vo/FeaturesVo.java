@@ -49,6 +49,21 @@ public class FeaturesVo {
      */
     private List<PolygonVo> polygonVos;
 
+    /**
+     * what:    合并两个features. <br/>
+     * when:    (这里描述这个类的适用时机 – 可选).<br/>
+     * how:     (这里描述这个类的使用方法 – 可选).<br/>
+     * warning: (这里描述这个类的注意事项 – 可选).<br/>
+     *
+     * @author 靳磊 created on 2019/10/24
+     */
+    public void merge(FeaturesVo featuresVo) {
+        getPoints().addAll(featuresVo.getPoints());
+        getTexts().addAll(featuresVo.getTexts());
+        getLineStrings().addAll(featuresVo.getLineStrings());
+        getPolygonVos().addAll(featuresVo.getPolygonVos());
+    }
+
     public int getMinZoomLevel() {
         return minZoomLevel;
     }

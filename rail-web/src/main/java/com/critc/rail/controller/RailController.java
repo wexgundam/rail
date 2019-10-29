@@ -7,12 +7,16 @@ package com.critc.rail.controller;
 
 import com.critc.rail.service.StationService;
 import com.critc.rail.vo.LineView;
+import com.critc.rail.vo.LineViewTiles;
 import com.critc.rail.vo.NodeView;
+import com.critc.rail.vo.NodeViewTiles;
+import com.critc.rail.vo.TileViews;
 import com.critc.tile.modal.Bounds;
 import com.critc.tile.modal.Coordinate;
 import com.critc.tile.modal.CoordinateSystem;
 import com.critc.tile.modal.Figure;
 import com.critc.tile.modal.Projection;
+import com.critc.tile.modal.Tile;
 import com.critc.tile.modal.TileBounds;
 import com.critc.tile.modal.VectorTileSystem;
 import com.critc.tile.modal.View;
@@ -20,17 +24,30 @@ import com.critc.tile.vo.FeaturesVo;
 import com.critc.tile.vo.LineStringVo;
 import com.critc.tile.vo.PointVo;
 import com.critc.tile.vo.TextVo;
+import com.critc.util.cache.EhCacheUtil;
 import com.critc.util.json.JsonUtil;
 import com.critc.util.web.WebUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 /**
  * what:    (这里用一句话描述这个类的作用). <br/>
@@ -43,6 +60,10 @@ import java.io.InputStream;
 @RequestMapping("/rail")
 @Controller
 public class RailController {
+    /**
+     * 定义日志输出位置
+     */
+    private Logger logger = LoggerFactory.getLogger("serviceLog");
     @Autowired
     private StationService stationService;
     CoordinateSystem coordinateSystem = new CoordinateSystem();
@@ -98,15 +119,15 @@ public class RailController {
      * @author 靳磊 created on 2019/10/23
      */
     @RequestMapping(value = "/features")
-    public void getFeatures(@RequestParam(value = "zoom-level") Integer zoomLevel,
-                            @RequestParam(value = "view-width") Double viewWidth,
-                            @RequestParam(value = "view-height") Double viewHeight,
-                            @RequestParam(value = "figure-center-view-coordinate-delta-x") Double figureCenterViewCoordinateDeltaX,
-                            @RequestParam(value = "figure-center-view-coordinate-delta-y") Double figureCenterViewCoordinateDeltaY,
-                            @RequestParam(value = "locked-view-coordinate-delta-x") Double lockedViewCoordinateDeltaX,
-                            @RequestParam(value = "locked-view-coordinate-delta-y") Double lockedViewCoordinateDeltaY,
-                            @RequestParam(value = "previous-zoom-level", required = false) Integer previousZoomLevel,
-                            HttpServletResponse response) {
+    public void getNodeViewFeatures(@RequestParam(value = "zoom-level") Integer zoomLevel,
+                                    @RequestParam(value = "view-width") Double viewWidth,
+                                    @RequestParam(value = "view-height") Double viewHeight,
+                                    @RequestParam(value = "figure-center-view-coordinate-delta-x") Double figureCenterViewCoordinateDeltaX,
+                                    @RequestParam(value = "figure-center-view-coordinate-delta-y") Double figureCenterViewCoordinateDeltaY,
+                                    @RequestParam(value = "locked-view-coordinate-delta-x") Double lockedViewCoordinateDeltaX,
+                                    @RequestParam(value = "locked-view-coordinate-delta-y") Double lockedViewCoordinateDeltaY,
+                                    @RequestParam(value = "previous-zoom-level", required = false) Integer previousZoomLevel,
+                                    HttpServletResponse response) {
 
         ////////根据请求参数构建请求方的显示环境////////
 
@@ -149,6 +170,19 @@ public class RailController {
         double viewCenterFigureCoordinateY = previousViewCenterFigureCoordinate.getY() + previousLockedViewCoordinateFigureGCoordinate.getY() - lockedViewCoordinateFigureGCoordinate.getY();
         vectorTileSystem.setViewCenterFigureCoordinate(new Coordinate(viewCenterFigureCoordinateX, viewCenterFigureCoordinateY));
 
+        FeaturesVo featuresVo = createFeaturesVo(vectorTileSystem);
+
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("success", true);
+        modelMap.put("data", featuresVo);
+        String json = JsonUtil.toStr(modelMap);
+        WebUtil.out(response, json);
+    }
+
+    private FeaturesVo createFeaturesVo(VectorTileSystem vectorTileSystem) {
+        View view = vectorTileSystem.getView();
+        Figure figure = vectorTileSystem.getFigure();
+        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
         //计算实际图中心点的视图图坐标
         Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
         Coordinate figureCenterViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, figure.getCenterCoordinate());
@@ -160,31 +194,6 @@ public class RailController {
         featuresVo.setMaxZoomLevel(vectorTileSystem.getMaxZoomLevel());
         featuresVo.setFigureCenterViewCoordinateDeltaX(figureCenterViewCoordinate.getX() - view.getBounds().getCenterCoordinate().getX());
         featuresVo.setFigureCenterViewCoordinateDeltaY(figureCenterViewCoordinate.getY() - view.getBounds().getCenterCoordinate().getY());
-
-        //计算当前视图的瓦片范围
-        TileBounds tileBounds = coordinateSystem.viewBoundsToTileBounds(figure, view, projection, viewCenterFigureCoordinate, view.getBounds());
-
-        for (NodeView nodeView : getNodeViews()) {
-            TileBounds nodeViewTileBounds = getTileBounds(figure, projection, nodeView);
-            if (nodeViewTileBounds.getTopLeftTile().getRow() > tileBounds.getBottomRightTile().getRow()
-                    || nodeViewTileBounds.getBottomRightTile().getRow() < tileBounds.getTopLeftTile().getRow()
-                    || nodeViewTileBounds.getTopLeftTile().getColumn() > tileBounds.getBottomRightTile().getColumn()
-                    || nodeViewTileBounds.getBottomRightTile().getColumn() < tileBounds.getTopLeftTile().getColumn()
-                    ) {
-                continue;
-            }
-            Coordinate viewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, nodeView.getX(), nodeView.getY());
-            PointVo pointVo = new PointVo();
-            pointVo.setX(viewCoordinate.getX());
-            pointVo.setY(viewCoordinate.getY());
-            featuresVo.getPoints().add(pointVo);
-
-            TextVo textVo = new TextVo();
-            textVo.setText(nodeView.getName());
-            textVo.setX(viewCoordinate.getX() + 5);
-            textVo.setY(viewCoordinate.getY());
-            featuresVo.getTexts().add(textVo);
-        }
 
         PointVo pointVo = new PointVo();
         Coordinate centerCoordinate = view.getBounds().getCenterCoordinate();
@@ -207,32 +216,96 @@ public class RailController {
         textVo.setY(pointVo.getY());
         featuresVo.getTexts().add(textVo);
 
-        for (LineView lineView : getLineViews()) {
-            TileBounds lineViewTileBounds = getTileBounds(figure, projection, lineView);
-            if (lineViewTileBounds.getTopLeftTile().getRow() > tileBounds.getBottomRightTile().getRow()
-                    || lineViewTileBounds.getBottomRightTile().getRow() < tileBounds.getTopLeftTile().getRow()
-                    || lineViewTileBounds.getTopLeftTile().getColumn() > tileBounds.getBottomRightTile().getColumn()
-                    || lineViewTileBounds.getBottomRightTile().getColumn() < tileBounds.getTopLeftTile().getColumn()
-                    ) {
-                continue;
-            }
 
-            LineStringVo lineStringVo = new LineStringVo();
-            Coordinate sourceViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getSourceX(), lineView.getSourceY());
-            Coordinate targetViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getTargetX(), lineView.getTargetY());
-            double[] xys = new double[]{sourceViewCoordinate.getX(), sourceViewCoordinate.getY(), targetViewCoordinate.getX(), targetViewCoordinate.getY()};
-            lineStringVo.setXys(xys);
-            featuresVo.getLineStrings().add(lineStringVo);
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<FeaturesVo>> futureTasks = new ArrayList<>();
+
+        Map<String, TileViews> tiles = EhCacheUtil.get("railTileCache", "tileViewsMap");
+        if (tiles == null) {
+            init();
         }
 
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("success", true);
-        modelMap.put("data", featuresVo);
-        String json = JsonUtil.toStr(modelMap);
-        WebUtil.out(response, json);
+        TileBounds tileBounds = coordinateSystem.viewBoundsToTileBounds(figure, view, projection, viewCenterFigureCoordinate, view.getBounds());
+        for (Tile tile : tileBounds.getTiles()) {
+            if (!tiles.containsKey(tile.getId())) {
+                continue;
+            }
+            TileViews tileViews = tiles.get(tile.getId());
+            for (NodeView nodeView : tileViews.getNodeViews()) {
+                Callable<FeaturesVo> callable = () -> createFeature(vectorTileSystem, tileBounds, nodeView);
+                // 创建FutureTask
+                FutureTask<FeaturesVo> futureTask = new FutureTask<>(callable);
+                // 添加到任务集合
+                futureTasks.add(futureTask);
+                // 将任务提交到线程池
+                executorService.submit(futureTask);
+            }
+            for (LineView lineView : tileViews.getLineViews()) {
+                Callable<FeaturesVo> callable = () -> createFeature(vectorTileSystem, tileBounds, lineView);
+                // 创建FutureTask
+                FutureTask<FeaturesVo> futureTask = new FutureTask<>(callable);
+                // 添加到任务集合
+                futureTasks.add(futureTask);
+                // 将任务提交到线程池
+                executorService.submit(futureTask);
+            }
+        }
+
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
+
+        // 返回结果
+        for (FutureTask<FeaturesVo> task : futureTasks) {
+            try {
+                featuresVo.merge(task.get());
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: createFeaturesVo");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: createFeaturesVo");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+
+        return featuresVo;
     }
 
-    public TileBounds getTileBounds(Figure figure, Projection projection, NodeView nodeView) {
+    private FeaturesVo createFeature(VectorTileSystem vectorTileSystem, TileBounds tileBounds, NodeView nodeView) {
+        Figure figure = vectorTileSystem.getFigure();
+        View view = vectorTileSystem.getView();
+        int zoomLevel = vectorTileSystem.getZoomLevel();
+        Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
+        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
+
+        FeaturesVo featuresVo = new FeaturesVo();
+        TileBounds nodeViewTileBounds = getTileBounds(figure, projection, nodeView);
+        if (nodeViewTileBounds.intersect(tileBounds)) {
+            if (zoomLevel > 2) {
+                Coordinate viewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, nodeView.getX(), nodeView.getY());
+                PointVo pointVo = new PointVo();
+                pointVo.setX(viewCoordinate.getX());
+                pointVo.setY(viewCoordinate.getY());
+                featuresVo.getPoints().add(pointVo);
+                if (zoomLevel > 5) {
+                    TextVo textVo = new TextVo();
+                    textVo.setText(nodeView.getName());
+                    textVo.setX(viewCoordinate.getX() + 5);
+                    textVo.setY(viewCoordinate.getY());
+                    featuresVo.getTexts().add(textVo);
+                }
+            }
+        }
+
+        return featuresVo;
+    }
+
+    private TileBounds getTileBounds(Figure figure, Projection projection, NodeView nodeView) {
         CoordinateSystem coordinateSystem = new CoordinateSystem();
 
         double size = 10;
@@ -241,7 +314,27 @@ public class RailController {
         return coordinateSystem.figureBoundsToTileBounds(figure, projection, bounds);
     }
 
-    public TileBounds getTileBounds(Figure figure, Projection projection, LineView lineView) {
+
+    private FeaturesVo createFeature(VectorTileSystem vectorTileSystem, TileBounds tileBounds, LineView lineView) {
+        Figure figure = vectorTileSystem.getFigure();
+        View view = vectorTileSystem.getView();
+        Coordinate viewCenterFigureCoordinate = vectorTileSystem.getViewCenterFigureCoordinate();
+        Projection projection = vectorTileSystem.getProjection(vectorTileSystem.getZoomLevel());
+
+        FeaturesVo featuresVo = new FeaturesVo();
+        TileBounds lineViewTileBounds = getTileBounds(figure, projection, lineView);
+        if (lineViewTileBounds.intersect(tileBounds)) {
+            LineStringVo lineStringVo = new LineStringVo();
+            Coordinate sourceViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getSourceX(), lineView.getSourceY());
+            Coordinate targetViewCoordinate = coordinateSystem.figureCoordinateToViewCoordinate(figure, view, projection, viewCenterFigureCoordinate, lineView.getTargetX(), lineView.getTargetY());
+            double[] xys = new double[]{sourceViewCoordinate.getX(), sourceViewCoordinate.getY(), targetViewCoordinate.getX(), targetViewCoordinate.getY()};
+            lineStringVo.setXys(xys);
+            featuresVo.getLineStrings().add(lineStringVo);
+        }
+        return featuresVo;
+    }
+
+    private TileBounds getTileBounds(Figure figure, Projection projection, LineView lineView) {
         CoordinateSystem coordinateSystem = new CoordinateSystem();
 
         Bounds bounds = new Bounds(Math.min(lineView.getSourceX(), lineView.getTargetX()),
@@ -251,4 +344,140 @@ public class RailController {
 
         return coordinateSystem.figureBoundsToTileBounds(figure, projection, bounds);
     }
+
+    @PostConstruct
+    public void init() {
+        EhCacheUtil.put("railTileCache", "tileViewsMap", new HashMap<String, TileViews>());
+        EhCacheUtil.put("railTileCache", "nodeViewsMap", new HashMap<String, NodeViewTiles>());
+        EhCacheUtil.put("railTileCache", "lineViewsMap", new HashMap<String, LineViewTiles>());
+        initNodeViewTiles();
+        initLineViewTiles();
+    }
+
+    public void initNodeViewTiles() {
+        VectorTileSystem vectorTileSystem = new VectorTileSystem();
+        vectorTileSystem.setFigure(getFigure());
+
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<NodeViewTiles>> futureTasks = new ArrayList<>();
+
+        for (NodeView nodeView : getNodeViews()) {
+            for (int zoomLevel = vectorTileSystem.getMinZoomLevel(); zoomLevel <= vectorTileSystem.getMaxZoomLevel(); zoomLevel++) {
+                Projection projection = vectorTileSystem.getProjection(zoomLevel);
+                // 声明任务
+                // 生成nodeView对应features
+                Callable<NodeViewTiles> callable = () -> {
+                    NodeViewTiles nodeViewTiles = new NodeViewTiles();
+                    nodeViewTiles.setNodeView(nodeView);
+                    TileBounds nodeViewTileBounds = getTileBounds(figure, projection, nodeView);
+                    nodeViewTiles.getTiles().addAll(nodeViewTileBounds.getTiles());
+                    return nodeViewTiles;
+                };
+                // 创建FutureTask
+                FutureTask<NodeViewTiles> futureTask = new FutureTask<>(callable);
+                // 添加到任务集合
+                futureTasks.add(futureTask);
+                // 将任务提交到线程池
+                executorService.submit(futureTask);
+            }
+        }
+
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
+
+        // 返回结果
+        for (FutureTask<NodeViewTiles> task : futureTasks) {
+            try {
+                NodeViewTiles nodeViewTiles = task.get();
+                Map<String, NodeViewTiles> nodeViewMap = EhCacheUtil.get("railTileCache", "nodeViewsMap");
+                nodeViewMap.put(nodeViewTiles.getNodeView().getId(), nodeViewTiles);
+                for (Tile tile : nodeViewTiles.getTiles()) {
+                    Map<String, TileViews> tileViewsMap = EhCacheUtil.get("railTileCache", "tileViewsMap");
+                    TileViews tileViews = tileViewsMap.get(tile.getId());
+                    if (tileViews == null) {
+                        tileViews = new TileViews();
+                        tileViews.setTile(tile);
+                        tileViewsMap.put(tile.getId(), tileViews);
+                    }
+                    tileViews.getNodeViews().add(nodeViewTiles.getNodeView());
+                }
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: initNodeViewTiles");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: initNodeViewTiles");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+    }
+
+    public void initLineViewTiles() {
+        VectorTileSystem vectorTileSystem = new VectorTileSystem();
+        vectorTileSystem.setFigure(getFigure());
+
+        // 声明固定线程池。后期根据性能优化
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        // 任务集合
+        List<FutureTask<LineViewTiles>> futureTasks = new ArrayList<>();
+
+        for (LineView lineView : getLineViews()) {
+            for (int zoomLevel = vectorTileSystem.getMinZoomLevel(); zoomLevel <= vectorTileSystem.getMaxZoomLevel(); zoomLevel++) {
+                Projection projection = vectorTileSystem.getProjection(zoomLevel);
+                // 声明任务
+                // 生成lineView对应features
+                Callable<LineViewTiles> callable = () -> {
+                    LineViewTiles lineViewTiles = new LineViewTiles();
+                    lineViewTiles.setLineView(lineView);
+                    TileBounds lineViewTileBounds = getTileBounds(figure, projection, lineView);
+                    lineViewTiles.getTiles().addAll(lineViewTileBounds.getTiles());
+                    return lineViewTiles;
+                };
+                // 创建FutureTask
+                FutureTask<LineViewTiles> futureTask = new FutureTask<>(callable);
+                // 添加到任务集合
+                futureTasks.add(futureTask);
+                // 将任务提交到线程池
+                executorService.submit(futureTask);
+            }
+        }
+
+        // 软性关闭线程池，开始执行线程
+        executorService.shutdown();
+
+        // 返回结果
+        for (FutureTask<LineViewTiles> task : futureTasks) {
+            try {
+                LineViewTiles lineViewTiles = task.get();
+                Map<String, LineViewTiles> lineViewMap = EhCacheUtil.get("railTileCache", "lineViewsMap");
+                lineViewMap.put(lineViewTiles.getLineView().getId(), lineViewTiles);
+                for (Tile tile : lineViewTiles.getTiles()) {
+                    Map<String, TileViews> tileViewsMap = EhCacheUtil.get("railTileCache", "tileViewsMap");
+                    TileViews tileViews = tileViewsMap.get(tile.getId());
+                    if (tileViews == null) {
+                        tileViews = new TileViews();
+                        tileViews.setTile(tile);
+                        tileViewsMap.put(tile.getId(), tileViews);
+                    }
+                    tileViews.getLineViews().add(lineViewTiles.getLineView());
+                }
+            } catch (InterruptedException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: initLineViewTiles");
+                logger.error("异常信息: " + e.getMessage());
+            } catch (ExecutionException e) {
+                // 异常日志
+                logger.error("任务类: " + getClass().getSimpleName());
+                logger.error("任务方法: initLineViewTiles");
+                logger.error("异常信息: " + e.getMessage());
+            }
+        }
+    }
+
 }
